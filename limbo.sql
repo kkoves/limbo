@@ -27,10 +27,13 @@ CREATE TABLE IF NOT EXISTS stuff
     location_id  INT       NOT NULL,
     title        TEXT      NOT NULL,
     description  TEXT      NOT NULL,
-    category     TEXT      NOT NULL,
+    category     INT       NOT NULL,
     create_date  DATETIME  NOT NULL,
     update_date  DATETIME  NOT NULL,
     room         TEXT,
+    email        TEXT      NOT NULL,
+    phone        INT       NOT NULL,
+    photo        TEXT,
     owner        TEXT,
     finder       TEXT,
     status       SET("found", "lost", "claimed")  NOT NULL
@@ -39,17 +42,17 @@ CREATE TABLE IF NOT EXISTS stuff
 #Insert lost items demo data
 
 INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `room`, `owner`, `finder`, `status`)
-    VALUES ('1', '6', 'Lost Stuff', 'Lost my stuff, someone help me find it', 'Other', "2015-11-17 12:15:29", "2015-11-17 12:15:29", NULL, 'John Doe', NULL, 'lost'),
-           ('2', '33', 'Backpack', 'Left my backpack on the bleachers in the stadium', 'Other', "2015-11-20 12:22:50", "2015-11-20 12:22:50", 'N/A', 'Marista Fox', NULL, 'lost'),
-           ('3', '31', 'Lost Galaxy S6 Phone', 'Lost my new Galaxy S6 phone in the dining hall, please let me know if you find it!', 'Cell Phones', "2015-11-23 12:28:59", "2015-11-23 12:28:59", 'Dining hall', 'Jane Doe', NULL, 'lost');
+    VALUES ('1', '6', 'Lost Stuff', 'Lost my stuff, someone help me find it', '5', "2015-11-17 12:15:29", "2015-11-17 12:15:29", NULL, 'John Doe', NULL, 'lost'),
+           ('2', '33', 'Backpack', 'Left my backpack on the bleachers in the stadium', '6', "2015-11-20 12:22:50", "2015-11-20 12:22:50", 'N/A', 'Marista Fox', NULL, 'lost'),
+           ('3', '31', 'Lost Galaxy S6 Phone', 'Lost my new Galaxy S6 phone in the dining hall, please let me know if you find it!', '1', "2015-11-23 12:28:59", "2015-11-23 12:28:59", 'Dining hall', 'Jane Doe', NULL, 'lost');
 
 
 #Insert found items demo data
 
 INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `room`, `owner`, `finder`, `status`)
-    VALUES ('4', '31', 'Samsung Galaxy S6', 'Found someone''s Samsung Galaxy S6 phone, unlock it to claim the phone', 'Cell Phones', "2015-11-23 12:40:00", "2015-11-23 12:40:00", 'Dining hall', '', 'John Smith', 'found'),
-           ('5', '22', 'Found high school class ring', 'Someone left their high school class ring in the 2nd floor lounge in Marian, name your high school and graduating class to claim it.', 'Jewelry', "2015-11-18 12:58:18", "2015-11-18 12:58:18", '2nd floor lounge', '', 'Jeff Howenstine', 'found'),
-           ('6', '2', 'Bose headphones', 'Found Bose headphones in the library, name the headphones'' model to claim it.', 'Electronics', "2015-11-21 13:04:45", "2015-11-21 13:04:45", '3rd floor Reading Room', '', 'Eric Berns', 'found');
+    VALUES ('4', '31', 'Samsung Galaxy S6', 'Found someone''s Samsung Galaxy S6 phone, unlock it to claim the phone', '1', "2015-11-23 12:40:00", "2015-11-23 12:40:00", 'Dining hall', '', 'John Smith', 'found'),
+           ('5', '22', 'Found high school class ring', 'Someone left their high school class ring in the 2nd floor lounge in Marian, name your high school and graduating class to claim it.', '4', "2015-11-18 12:58:18", "2015-11-18 12:58:18", '2nd floor lounge', '', 'Jeff Howenstine', 'found'),
+           ('6', '2', 'Bose headphones', 'Found Bose headphones in the library, name the headphones'' model to claim it.', '3', "2015-11-21 13:04:45", "2015-11-21 13:04:45", '3rd floor Reading Room', '', 'Eric Berns', 'found');
            
 # Create a table for all the buildings on campus
 CREATE TABLE IF NOT EXISTS locations
@@ -110,10 +113,12 @@ CREATE TABLE IF NOT EXISTS categories(
 
 # Populate categories table
 INSERT INTO categories(id, name)
-    VALUES(1, "Electronics"),
+    VALUES(1, "Cell Phones"),
           (2, "Clothing"),
-          (3, "Jewelry"),
-          (4, "Other");
+          (3, "Electronics"),
+          (4, "Jewelry"),
+          (5, "Other"),
+          (6, "Bags");
            
 # Print table definitions and contents to double-check everything
 

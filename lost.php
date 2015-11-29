@@ -125,9 +125,26 @@ and open the template in the editor.
                                     <div class="input-field col s3">
                                         <select name="location">
                                             <option value="" disabled selected>Building</option>
-                                            <option value="1">Hancock</option>
-                                            <option value="2">Donnelly</option>
-                                            <option value="3">McCann Center</option>
+                                            <?php
+                                                require('includes/connect_db.php');
+                                                require('includes/helpers.php');
+                                                
+                                                #Query database for campus locations
+                                                $query = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';
+                                                
+                                                #Execute query
+                                                $results = mysqli_query($dbc, $query);
+                                                
+                                                #Output SQL errors, if any
+                                                check_results($results);
+                                                
+                                                #Populate drop-down list, if we got results from the query
+                                                if($results) {
+                                                    while($row = mysqli_fetch_array($results , MYSQLI_ASSOC)) {
+                                                        echo '<option value="' . $row['id'] . '">' . $row['short_name'] . '</option>';
+                                                    }
+                                                }
+                                            ?>
                                         </select>
                                         <label>Location Found</label>
                                     </div>
@@ -143,9 +160,23 @@ and open the template in the editor.
                                     <div class="input-field col s3">
                                         <select name="category">
                                             <option value="" disabled selected>Category</option>
-                                            <option value="1">Electronics</option>
-                                            <option value="2">Appliance</option>
-                                            <option value="3">Clothing</option>
+                                            <?php
+                                                #Query database for item categories
+                                                $query = 'SELECT * FROM categories ORDER BY name ASC';
+                                                
+                                                #Execute query
+                                                $results = mysqli_query($dbc, $query);
+                                                
+                                                #Output SQL errors, if any
+                                                check_results($results);
+                                                
+                                                #Populate drop-down list, if we got results from the query
+                                                if($results) {
+                                                    while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
+                                                        echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
+                                                    }
+                                                }
+                                            ?>
                                         </select>
                                         <label>Item Type</label>
                                     </div>

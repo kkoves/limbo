@@ -55,7 +55,7 @@ and open the template in the editor.
             #mainPage{
                 font-size: 20px;
             }
-            #lostItemForm{
+            #foundItemForm{
                 padding-left: 5%;
             }
         </style>
@@ -91,39 +91,39 @@ and open the template in the editor.
             <div class="container">
                 <div class="row">
                     <div class="col s12">
-                        <div id="lostItemForm" class="row">
-                            <form class="col s12">
+                        <div id="foundItemForm" class="row">
+                            <form class="col s12" action="found.php" method="POST">
                                 <div class="row">
-                                    <div class="input-field col s12">
-                                        <input placeholder="Submission Title" id="submissionTitle" type="text" class="validate">
+                                    <div class="input-field col s6">
+                                        <input placeholder="Submission Title" name="submissionTitle" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
                                         <label for="submissionTitle">Title</label>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="input-field col s6">
-                                        <input placeholder="User's First Name" id="first_name" type="text" class="validate">
+                                    <div class="input-field col s3">
+                                        <input placeholder="User's First Name" name="first_name" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
                                         <label for="first_name">First Name</label>
                                     </div>
-                                    <div class="input-field col s6">
-                                        <input placeholder="User's Last Name" id="last_name" type="text" class="validate">
+                                    <div class="input-field col s3">
+                                        <input placeholder="User's Last Name" name="last_name" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
                                         <label for="last_name">Last Name</label>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="input-field col s6">
+                                    <div class="input-field col s3">
                                         <i class="material-icons prefix">email</i>
-                                        <input id="email" type="email" class="validate">
+                                        <input name="email" type="email" class="validate">
                                         <label for="email">Email</label>
                                     </div>
-                                    <div class="input-field col s6">
+                                    <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
-                                        <input id="phone" type="number" class="validate">
+                                        <input name="phone" type="number" class="validate">
                                         <label for="email">Phone #</label>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="input-field col s6">
-                                        <select>
+                                    <div class="input-field col s3">
+                                        <select name="location">
                                             <option value="" disabled selected>Building</option>
                                             <option value="1">Hancock</option>
                                             <option value="2">Donnelly</option>
@@ -131,13 +131,17 @@ and open the template in the editor.
                                         </select>
                                         <label>Location Found</label>
                                     </div>
-                                    <div class="input-field col s6">
-                                        <input placeholder="Day/Month/Year" type="date" class="datepicker">
-                                    </div>
+									<div class="input-field col s3">
+										<input name="room" type="text" class="validate">
+										<label for="room">Room #</label>
+									</div>
                                 </div>
                                 <div class="row">
-                                    <div class="input-field col s6">
-                                        <select>
+									<div class="input-field col s3">
+                                        <input placeholder="Day/Month/Year" type="date" class="datepicker" name="date">
+                                    </div>
+                                    <div class="input-field col s3">
+                                        <select name="category">
                                             <option value="" disabled selected>Category</option>
                                             <option value="1">Electronics</option>
                                             <option value="2">Appliance</option>
@@ -147,32 +151,40 @@ and open the template in the editor.
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="input-field col s12">
+                                    <div class="input-field col s6">
                                         <div class="row">
                                             <div class="input-field col s12">
-                                                <textarea id="description" class="materialize-textarea" length="1000"></textarea>
+                                                <textarea name="description" class="materialize-textarea" length="1000"></textarea>
                                                 <label for="textarea1">Description</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="file-field input-field">
+                                <div class="file-field input-field col s6">
                                     <div class="btn red darken-4">
                                         <span>Photo</span>
-                                        <input type="file">
+                                        <input type="file" name="photo">
                                     </div>
                                     <div class="file-path-wrapper">
-                                        <input class="file-path validate" type="text">
+                                        <input class="file-path validate" type="text" name="filepath">
                                     </div>
                                 </div>
-                                <br><br>
+                                <br><br><br>
                                 <div align="right" class="row">
-                                    <a class="waves-effect waves-light red darken-4 btn"><i class="material-icons right">send</i>Submit Form</a>
+                                    <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+                                        <i class="material-icons right">send</i>
+                                    </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
+                <?php
+                    if($_SERVER['REQUEST_METHOD'] == 'POST') {
+                        foreach($_POST as $key => $value)
+                            echo "<p>$key : $value</p>";
+                    }
+                ?>
             </div>
         </main>
     </body>

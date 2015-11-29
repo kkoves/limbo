@@ -131,11 +131,15 @@ and open the template in the editor.
                                         </select>
                                         <label>Location Found</label>
                                     </div>
-                                    <div class="input-field col s3">
-                                        <input placeholder="Day/Month/Year" type="date" class="datepicker" name="date">
-                                    </div>
+									<div class="input-field col s3">
+										<input name="room" type="text" class="validate">
+										<label for="room">Room #</label>
+									</div>
                                 </div>
                                 <div class="row">
+									<div class="input-field col s3">
+                                        <input placeholder="Day/Month/Year" type="date" class="datepicker" name="date">
+                                    </div>
                                     <div class="input-field col s3">
                                         <select name="category">
                                             <option value="" disabled selected>Category</option>

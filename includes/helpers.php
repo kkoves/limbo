@@ -206,7 +206,7 @@ function show_record($id) {
 
 # Inserts a lost/found item into limbo_db
 function insert_item($title, $full_name, $email, $phone, $location, $room, $date, $category, $description, $photo) {
-    $global dbc;
+    global $dbc;
     
     #TODO: add database insert functionality here
     

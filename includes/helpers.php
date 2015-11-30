@@ -204,8 +204,10 @@ function show_record($id) {
     }
 }
 
-# Inserts a record into the proper table in limbo_db, based on the $table parameter
-function insert_record(/*Add proper parameters here*/) {
+# Inserts a lost/found item into limbo_db
+function insert_item($title, $full_name, $email, $phone, $location, $room, $date, $category, $description, $photo) {
+    $global dbc;
+    
     #TODO: add database insert functionality here
     
     #$query = 'INSERT INTO table(value1, value2, value3) VALUES (' . $value1 . ' , "' . $value2 . '" , "' . $value3 . '" )';
@@ -234,8 +236,27 @@ function check_results($results) {
     echo '<p>SQL ERROR = ' . mysqli_error( $dbc ) . '</p>'  ;
 }
 
-function valid_form() {
+function validate_form() {
     #TODO: add form validation functionality here
+    
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    
+    #Concatenate separate name fields into one
+    $name = trim($first_name) . ' ' . trim($last_name);
+    
+    $_POST['full_name'] = $name;
+    
+    $phone = $_POST['phone'];
+    
+    #TODO: validate phone number
+    
+    $description = $_POST['description'];
+    
+    #remove new lines (\n) from description field
+    $description = trim(preg_replace('/\s+/', ' ', $description));
+    
+    $_POST['description'] = $description;
 }
 
 ?>

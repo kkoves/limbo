@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Limbo Admin | Claimed Items</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Compiled and minified CSS -->
@@ -68,11 +68,11 @@ and open the template in the editor.
             <div>
                 <ul id="slide-out" class="side-nav fixed">
                     <p align="center"><img height="150px" width="150px" src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4b/Marist_College_Seal_-_Vector.svg/1016px-Marist_College_Seal_-_Vector.svg.png"/></p>
-                    <li><a href="Admin Page.html">Main Page</a></li>
-                    <li><a href="Admin Lost Page.html">Lost Items</a></li>
-                    <li><a href="Admin Found Page.html">Found Items</a></li>
-                    <li><a href="Admin Claimed Page.html">Claimed Items</a></li>
-                    <li><a href="Admin Compare Page.html">Compare Records</a></li>
+                    <li><a href="index.php">Main Page</a></li>
+                    <li><a href="lost.php">Lost Items</a></li>
+                    <li><a href="found.php">Found Items</a></li>
+                    <li><a href="claimed.php">Claimed Items</a></li>
+                    <li><a href="compare.php">Compare Records</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>

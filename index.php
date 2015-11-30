@@ -102,12 +102,7 @@ and open the template in the editor.
         </header>
         <main>
             <div class="container">
-                <!-- Modal Trigger -->
-                <!--
-                <a class="modal-trigger waves-effect waves-light btn" href="#modal1">Modal</a>
-                -->
-
-                  <!-- Modal Structure -->
+                  <!-- Modal dialog for "Lost & Found Item Detail" -->
                   <div id="modal1" class="modal modal-fixed-footer">
                     <div class="modal-content">
                       <h4>Lost/Found Item Detail</h4>
@@ -128,6 +123,7 @@ and open the template in the editor.
                     </div>
                   </div>
                 <?php
+                    #Call a helper function (in includes/helpers.php) to list the database contents
                     show_records($dbc);
                 ?>
             </div>

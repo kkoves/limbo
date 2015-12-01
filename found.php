@@ -28,10 +28,15 @@ and open the template in the editor.
         ?>
         <script>
             $(document).ready(function () {
+                var date = new Date();
+				var year = date.getFullYear();
+				
                 $('select').material_select();
                 $('.datepicker').pickadate({
                     selectMonths: true, // Creates a dropdown to control month
-                    selectYears: 15 // Creates a dropdown of 15 years to control year
+                    selectYears: 2, // Creates a dropdown of 2 years to control year
+					max: year,
+					format: 'yyyy-mm-dd' // Date format
                 });
                 
                 // Auto-fill description field if form submission failed
@@ -163,7 +168,8 @@ and open the template in the editor.
                                 </div>
                                 <div class="row">
 									<div class="input-field col s3">
-                                        <input placeholder="Day/Month/Year" type="date" class="datepicker" name="date" value="<?php if(isset($_POST['date'])) echo $_POST['date']; ?>">
+                                        <input placeholder="Year-Month-Day" type="date" class="datepicker" name="date" value="<?php if(isset($_POST['date'])) echo $_POST['date']; ?>">
+										<label for="date">Date Found</label>
                                     </div>
                                     <div class="input-field col s3">
                                         <select name="category">

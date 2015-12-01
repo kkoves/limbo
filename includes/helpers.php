@@ -54,9 +54,9 @@ function get_category($id){
     return $results[0];
 }
 
-function format_date($date) {
+function format_date($date, $format) {
     $date = strtotime($date);
-    $dateForView = date("m/d/Y", $date);
+    $dateForView = date($format, $date);
     
     return $dateForView;
 }
@@ -91,7 +91,7 @@ function show_records($dbc) {
         {
             #$location = $locations[ $row['location_id'] ];
             $location = get_location($row['location_id']);
-            $date = format_date($row['create_date']);
+            $date = format_date($row['create_date'], "m/d/Y");
             $category = get_category($row['category']);
             
             echo '<tr>';
@@ -126,7 +126,6 @@ function show_record($id) {
         
         while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
             $location = get_location($row['location_id']);
-            $date = format_date($row['create_date']);
             $category = get_category($row['category']);
             
             echo '<tr>';
@@ -138,6 +137,20 @@ function show_record($id) {
                 echo '<td><b>Status:</b></td>';
                 echo '<td>' . $row['status'] . '</td>';
             echo '</tr>';
+			
+			if(!empty($row['lost_date'])) {
+				echo '<tr>';
+                    echo '<td><b>Lost Date:</b></td>';
+                    echo '<td>' . format_date($row['lost_date'], "m/d/Y") . '</td>';
+                echo '</tr>';
+			}
+			
+			if(!empty($row['found_date'])) {
+				echo '<tr>';
+                    echo '<td><b>Found Date:</b></td>';
+                    echo '<td>' . format_date($row['found_date'], "m/d/Y") . '</td>';
+                echo '</tr>';
+			}
             
             echo '<tr>';
                 echo '<td><b>Category:</b></td>';
@@ -157,16 +170,6 @@ function show_record($id) {
             echo '<tr>';
                 echo '<td><b>Room:</b></td>';
                 echo '<td>' . $row['room'] . '</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-                echo '<td><b>Creation Date:</b></td>';
-                echo '<td>' . $date . '</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-                echo '<td><b>Last Update:</b></td>';
-                echo '<td>' . $date . '</td>';
             echo '</tr>';
             
             if(!empty($row['owner'])) {
@@ -199,6 +202,16 @@ function show_record($id) {
                     echo '<td>' . $row['photo'] . '</td>';
                 echo '</tr>';
             }
+			
+			echo '<tr>';
+                echo '<td><b>Report Date:</b></td>';
+                echo '<td>' . format_date($row['create_date'], "m/d/Y, h:i:s A") . '</td>';
+            echo '</tr>';
+            
+            echo '<tr>';
+                echo '<td><b>Last Update:</b></td>';
+                echo '<td>' . format_date($row['update_date'], "m/d/Y, h:i:s A") . '</td>';
+            echo '</tr>';
         }
         echo '</table>';
     }

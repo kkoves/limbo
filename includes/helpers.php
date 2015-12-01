@@ -138,14 +138,16 @@ function show_record($id) {
                 echo '<td>' . $row['status'] . '</td>';
             echo '</tr>';
 			
-			if(!empty($row['lost_date'])) {
+			//If lost date is not "empty" (all 0's), display it
+			if($row['lost_date'] != '0000-00-00 00:00:00') {
 				echo '<tr>';
                     echo '<td><b>Lost Date:</b></td>';
                     echo '<td>' . format_date($row['lost_date'], "m/d/Y") . '</td>';
                 echo '</tr>';
 			}
 			
-			if(!empty($row['found_date'])) {
+			//If found date is not "empty" (all 0's), display it
+			if($row['found_date'] != '0000-00-00 00:00:00') {
 				echo '<tr>';
                     echo '<td><b>Found Date:</b></td>';
                     echo '<td>' . format_date($row['found_date'], "m/d/Y") . '</td>';
@@ -217,20 +219,54 @@ function show_record($id) {
     }
 }
 
-# Inserts a lost/found item into limbo_db
-function insert_item($title, $full_name, $email, $phone, $location, $room, $date, $category, $description, $photo) {
+# Inserts a lost/found item into limbo_db from $_POST
+function insert_item($status, $date /*$title, $full_name, $email, $phone, $location, $room, $lost_date, $found_date, $report_date, $category, $description, $filepath*/) {
     global $dbc;
+	
+	#$var = $_POST[''];
+	
+	#Assign variabled to insert into database from user input in $_POST
+	$loc = $_POST['location'];
+	$title = $_POST['title'];
+	$descr = $_POST['description'];
+	$category = $_POST['category'];
+	$create_date = $date;
+	$update_date = $date;
+	
+	if($status == 'Lost') $lost_date = $_POST['date'];
+	else $lost_date = '';
+	
+	if($status == 'Found') $found_date = $_POST['date'];
+	else $found_date = '';
+	
+	$room = $_POST['room'];
+	$email = $_POST['email'];
+	$phone = $_POST['phone'];
+	$photo = $_POST['filepath'];
+	
+	if($status == 'Lost') $owner = $_POST['full_name'];
+	else $owner = '';
+	
+	if($status == 'Found') $finder = $_POST['full_name'];
+	else $finder = '';
+	
+	$stat = $status;
     
     #TODO: add database insert functionality here
     
-    #$query = 'INSERT INTO table(value1, value2, value3) VALUES (' . $value1 . ' , "' . $value2 . '" , "' . $value3 . '" )';
-     
-    #show_query($query);
+    $query = "INSERT INTO stuff(location_id, title, description, category, create_date, update_date, lost_date, found_date, room, email, phone, photo, owner, finder, status) VALUES($loc, \"$title\", \"$descr\", $category, \"$create_date\", \"$update_date\", \"$lost_date\", \"$found_date\", \"$room\", \"$email\", $phone, \"$photo\", \"$owner\", \"$finder\", \"$stat\")";
+	#'INSERT INTO stuff(location_id, value2, value3) VALUES (' . $value1 . ' , "' . $value2 . '" , "' . $value3 . '" )';
+    
+	#Show query if debugging is enabled (at the top of this file)
+    show_query($query);
 
-    #$results = mysqli_query($dbc,$query) ;
-    #check_results($results) ;
-
-    #return $results ;
+	#Get results of SQL query
+    $results = mysqli_query($dbc,$query);
+    
+	#Output SQL errors, if any
+	check_results($results);
+	
+    return $results ;
 }
 
 # Shows query as a debugging aid
@@ -246,12 +282,14 @@ function check_results($results) {
   global $dbc;
 
   if($results != true)
-    echo '<p>SQL ERROR = ' . mysqli_error( $dbc ) . '</p>'  ;
+    echo '<p>SQL ERROR = ' . mysqli_error( $dbc ) . '</p>';
 }
 
-function validate_form() {
+function valid_form() {
     #TODO: add form validation functionality here
     
+	$errors = false; #TODO: make errors array
+	
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     
@@ -263,6 +301,7 @@ function validate_form() {
     $phone = $_POST['phone'];
     
     #TODO: validate phone number
+	#Basic regex: /\d{10}/
     
     $description = $_POST['description'];
     
@@ -270,6 +309,21 @@ function validate_form() {
     $description = trim(preg_replace('/\s+/', ' ', $description));
     
     $_POST['description'] = $description;
+	
+	#If there are errors in form fields
+	/*
+	if(!empty(errors)) {
+		#TODO: Print error messages
+		echo '<p>Invalid form submission, please try again. Most form values were saved.</p>';
+		return false;
+	}
+	#Else, if there are no errors in form fields (to the best of our knowledge)
+	else {
+		#TODO: Print success message
+		return true;
+	}
+	*/
+	return true;
 }
 
 ?>

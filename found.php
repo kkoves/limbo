@@ -23,8 +23,10 @@ and open the template in the editor.
             require('includes/helpers.php');
             require('includes/connect_db.php');
             
-            if($_SERVER['REQUEST_METHOD'] == 'POST')
-                validate_form();
+            if($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if(valid_form()) // if form is valid
+					insert_item('Found', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
+			}
         ?>
         <script>
             $(document).ready(function () {

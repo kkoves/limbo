@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS stuff
 	found_date	 DATETIME,
     room         TEXT,
     email        TEXT      NOT NULL,
-    phone        INT       NOT NULL,
+    phone        TEXT      NOT NULL,
     photo        TEXT,
     owner        TEXT,
     finder       TEXT,

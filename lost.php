@@ -24,8 +24,12 @@ and open the template in the editor.
             require('includes/connect_db.php');
             
             if($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if(valid_form()) // if form is valid
+                if(valid_form()) { // if form is valid
 					insert_item('Lost', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
+                    
+                    if(!empty($_POST['photo']))
+                        upload_picture();
+                }
 			}
         ?>
         <script>
@@ -110,28 +114,28 @@ and open the template in the editor.
                 <div class="row">
                     <div class="col s12">
                         <div id="lostItemForm" class="row">
-                            <form class="col s12" action="lost.php" method="POST">
+                            <form enctype="multipart/form-data" class="col s12" action="lost.php" method="POST">
                                 <div class="row">
                                     <div class="input-field col s6">
-                                        <input placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
-                                        <label for="title">Title</label>
+                                        <input required placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
+                                        <label for="title">Title*</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
-                                        <input placeholder="User's First Name" name="first_name" type="text" class="validate" value="<?php if(isset($_POST['first_name'])) echo $_POST['first_name']; ?>">
-                                        <label for="first_name">First Name</label>
+                                        <input required placeholder="User's First Name" name="first_name" type="text" class="validate" value="<?php if(isset($_POST['first_name'])) echo $_POST['first_name']; ?>">
+                                        <label for="first_name">First Name*</label>
                                     </div>
                                     <div class="input-field col s3">
-                                        <input placeholder="User's Last Name" name="last_name" type="text" class="validate" value="<?php if(isset($_POST['last_name'])) echo $_POST['last_name']; ?>">
-                                        <label for="last_name">Last Name</label>
+                                        <input required placeholder="User's Last Name" name="last_name" type="text" class="validate" value="<?php if(isset($_POST['last_name'])) echo $_POST['last_name']; ?>">
+                                        <label for="last_name">Last Name*</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">email</i>
-                                        <input name="email" type="email" class="validate" value="<?php if(isset($_POST['email'])) echo $_POST['email']; ?>">
-                                        <label for="email">Email</label>
+                                        <input required name="email" type="email" class="validate" value="<?php if(isset($_POST['email'])) echo $_POST['email']; ?>">
+                                        <label for="email">Email*</label>
                                     </div>
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
@@ -141,7 +145,7 @@ and open the template in the editor.
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
-                                        <select name="location">
+                                        <select required name="location">
                                             <option value="" disabled selected>Building</option>
                                             <?php
                                                 #Query database for campus locations
@@ -161,7 +165,7 @@ and open the template in the editor.
                                                 }
                                             ?>
                                         </select>
-                                        <label>Location Lost</label>
+                                        <label>Location Lost*</label>
                                     </div>
 									<div class="input-field col s3">
 										<input name="room" type="text" class="validate" value="<?php if(isset($_POST['room'])) echo $_POST['room']; ?>">
@@ -170,11 +174,11 @@ and open the template in the editor.
                                 </div>
                                 <div class="row">
 									<div class="input-field col s3">
-                                        <input placeholder="Year-Month-Day" type="date" class="datepicker" name="date" value="<?php if(isset($_POST['date'])) echo $_POST['date']; ?>">
-										<label for="date">Date Lost</label>
+                                        <input required placeholder="Year-Month-Day" type="date" class="datepicker" name="date" value="<?php if(isset($_POST['date'])) echo $_POST['date']; ?>">
+										<label for="date">Date Lost*</label>
                                     </div>
                                     <div class="input-field col s3">
-                                        <select name="category">
+                                        <select required name="category">
                                             <option value="" disabled selected>Category</option>
                                             <?php
                                                 #Query database for item categories
@@ -194,15 +198,15 @@ and open the template in the editor.
                                                 }
                                             ?>
                                         </select>
-                                        <label>Item Type</label>
+                                        <label>Item Type*</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <div class="row">
                                             <div class="input-field col s12">
-                                                <textarea id="description" name="description" class="materialize-textarea" length="1000"></textarea>
-                                                <label for="textarea1">Description</label>
+                                                <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
+                                                <label for="textarea1">Description*</label>
                                             </div>
                                         </div>
                                     </div>
@@ -229,7 +233,9 @@ and open the template in the editor.
                 <?php
                     if($_SERVER['REQUEST_METHOD'] == 'POST') {
                         foreach($_POST as $key => $value)
-                            echo "<p>$key : $value</p>";
+                            echo "<p>$key: $value</p>";
+                        foreach($_FILES['photo'] as $key => $value)
+                            echo "<p>$key: $value</p>";
                     }
                 ?>
             </div>

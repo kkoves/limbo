@@ -77,5 +77,10 @@ and open the template in the editor.
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>
         </header>
+        <main>
+            <?php
+                //TODO: implement admin functionality
+            ?>
+        </main>
     </body>
 </html>

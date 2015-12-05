@@ -141,6 +141,13 @@ and open the template in the editor.
                                         <label for="first_name">Password</label>
                                     </div>
                                 </div>
+								<div class="row">
+                                    <div class="input-field col s6">
+                                        <button class="btn waves-effect waves-light red darken-4" type="submit">Login
+											<i class="material-icons right">send</i>
+										</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

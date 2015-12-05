@@ -11,6 +11,7 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <!-- Compiled and minified JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -101,15 +102,20 @@ and open the template in the editor.
         </header>
 		<main>
             <div class="container">
+				<?php
+					require('../includes/connect_db.php');
+					require('../includes/helpers.php');
+					
+					if(isset($_GET['delete'])){
+						delete_item($_GET['delete']);
+					}
+				?>
 			    <!-- Modal dialog for "Lost & Found Item Detail" -->
 				<div id="modal1" class="modal modal-fixed-footer">
 					<div class="modal-content">
 						<h4>Lost/Found Item Detail</h4>
 						<p>
 							<?php
-								require('..\includes/connect_db.php');
-								require('..\includes/helpers.php');
-						
 								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
 									if(isset($_GET['id']))
 										show_record($_GET['id']);

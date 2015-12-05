@@ -135,6 +135,7 @@ function show_records_found($dbc) {
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
+		echo '<th style="text-align:center">Delete Item</th>';
         echo '</tr>';
 
         # For each row result, generate a table row
@@ -147,11 +148,12 @@ function show_records_found($dbc) {
             
             echo '<tr>';
 			echo '<th>' . $row['id'] . '</th>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=found.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
+			echo '<td style="text-align:center;">' . '<a class="material-icons" style="color:#9e9e9e" href="found.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
             echo '</tr>';
         }
 
@@ -187,6 +189,7 @@ function show_records_lost($dbc) {
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
+		echo '<th style="text-align:center">Delete Item</th>';
         echo '</tr>';
 
         # For each row result, generate a table row
@@ -199,11 +202,12 @@ function show_records_lost($dbc) {
             
             echo '<tr>';
 			echo '<th>' . $row['id'] . '</th>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=lost.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
+			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
             echo '</tr>';
         }
 
@@ -381,15 +385,28 @@ function show_users($id){
         echo '<th>Password</th>';
         echo '<th>Registered Date</th>';
 		
+		
 		while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)){
 			echo '<tr>';
 				echo '<td>' . $row['user'] . '</td>';
 				echo '<td>' . $row['pass'] . '</td>';
 				echo '<td>' . $row['reg_date'] . '</td>';
+				
 			echo '</tr>';
 		}
 		echo '</table>';
 	}
+}
+
+#Deletes an Item from the database
+function delete_item($id){
+	global $dbc;
+	
+	$query = 'DELETE FROM stuff WHERE id=' .$id;
+	
+	$results = mysqli_query($dbc, $query);
+    check_results($results);
+	
 }
 
 # Inserts a lost/found item into limbo_db from $_POST

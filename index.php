@@ -19,6 +19,7 @@ and open the template in the editor.
             $(document).ready(function(){
                 // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
                 $('.modal-trigger').leanModal();
+				$('select').material_select();
                 
                 var str = window.location.href;
                 
@@ -102,26 +103,55 @@ and open the template in the editor.
         </header>
         <main>
             <div class="container">
-                  <!-- Modal dialog for "Lost & Found Item Detail" -->
-                  <div id="modal1" class="modal modal-fixed-footer">
-                    <div class="modal-content">
-                      <h4>Lost/Found Item Detail</h4>
-                      <p>
-                          <?php
-                            require('includes/connect_db.php');
-                            require('includes/helpers.php');
-                            
-                            if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
-                                if(isset($_GET['id']))
-                                    show_record($_GET['id']);
-                            }
-                          ?>
-                      </p>
-                    </div>
-                    <div class="modal-footer">
-                      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
-                    </div>
-                  </div>
+			    <!-- Modal dialog for "Lost & Found Item Detail" -->
+				<div id="modal1" class="modal modal-fixed-footer">
+					<div class="modal-content">
+						<h4>Lost/Found Item Detail</h4>
+						<p>
+							<?php
+								require('includes/connect_db.php');
+								require('includes/helpers.php');
+						
+								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
+									if(isset($_GET['id']))
+										show_record($_GET['id']);
+								}
+							?>
+						</p>
+					</div>
+					<div class="modal-footer">
+						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s1">
+						<label value="" disabled selected style="color:Black">Filter By:<label>
+					</div>
+					<div class="input-field col s3">
+						<select>
+							<option value="" disabled selected style="color:Gray">Location</option>
+							<option value="1">Option 1</option>
+							<option value="2">Option 2</option>
+							<option value="3">Option 3</option>
+						</select>
+					</div>
+					<div class="input-field col s3">
+						<select>
+							<option value="" disabled selected style="color:Gray">Category</option>
+							<option value="1">Option 1</option>
+							<option value="2">Option 2</option>
+							<option value="3">Option 3</option>
+						</select>
+					</div>
+					<div class="input-field col s3">
+						<select>
+							<option value="" disabled selected>Status</option>
+							<option value="1">Lost</option>
+							<option value="2">Found</option>
+							<option value="3">Claimed</option>
+						</select>
+					</div>
+				</div>
                 <?php
                     #Call a helper function (in includes/helpers.php) to list the database contents
                     show_records($dbc);

@@ -49,29 +49,27 @@ and open the template in the editor.
                 return i;
             }
         </script>
-		<script>
-			<?php
-				# Connect to MySQL server and the database
-				require( '../includes/connect_db.php' ) ;
+		<?php
+			# Connect to MySQL server and the database
+			require( '../includes/connect_db.php' ) ;
 
-				# Connect to MySQL server and the database
-				require( '../includes/limbo_login_tools.php' ) ;
+			# Connect to MySQL server and the database
+			require( '../includes/limbo_login_tools.php' ) ;
 
-				if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
+			if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
 
-					$user = $_POST['name'];
-					$pass = $_POST['pass'];
-    
-					$pid = validate($user, $pass);
+				$user = $_POST['name'];
+				$pass = $_POST['pass'];
 
-					if($pid == -1)
-						echo '<p style=color:red>Login failed, please try again.</p>';
+				$pid = validate($user, $pass);
 
-				else
-					load('index.php', $pid);
-				}
-			?>
-		</script>
+				if($pid == -1)
+					echo '<script>$(document).ready(function () {$("#error").html("Login Failed. Please try again...");});</script>';
+
+			else
+				load('index.php', $pid);
+			}
+		?>
 
         <style>
             nav{
@@ -93,7 +91,11 @@ and open the template in the editor.
 			#form{
 				padding-left: 5%;
 			}
+			#error{
+				padding-bottom: 1%;
+			}
         </style>
+	</head>	
     <body onload="startTime()">
         <header>
             <nav class="top-nav">
@@ -105,7 +107,7 @@ and open the template in the editor.
             </nav>
             <nav>
                 <div class="nav-wrapper">
-                    <a id="mainPage" href="#" class="brand-logo center">Admin Page</a>
+                    <a id="mainPage" href="#" class="brand-logo center">Login Page</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
                         <li><a id="clock" href="collapsible.html">Time</a></li>
                     </ul>
@@ -114,11 +116,8 @@ and open the template in the editor.
             <div>
                 <ul id="slide-out" class="side-nav fixed">
                     <p align="center"><img height="150px" width="150px" src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4b/Marist_College_Seal_-_Vector.svg/1016px-Marist_College_Seal_-_Vector.svg.png"/></p>
-                    <li><a href="index.php">Main Page</a></li>
-                    <li><a href="lost.php">Lost Items</a></li>
-                    <li><a href="found.php">Found Items</a></li>
-                    <li><a href="claimed.php">Claimed Items</a></li>
-                    <li><a href="compare.php">Compare Records</a></li>
+                    <li><a href="login.php">Login Page</a></li>
+                    <li><a href="..\index.php">Main Page</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>
@@ -127,8 +126,9 @@ and open the template in the editor.
 			<div class="container">
                 <div class="row">
                     <div class="col s12">
+						<div id="error" style="color:Red"></div>
                         <div id="foundItemForm" class="row">
-                            <form class="col s12" action="found.php" method="POST">
+                            <form class="col s12" action="login.php" method="POST">
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input required placeholder="Username" name="name" type="text" class="validate">
@@ -143,7 +143,7 @@ and open the template in the editor.
                                 </div>
 								<div class="row">
                                     <div class="input-field col s6">
-                                        <button class="btn waves-effect waves-light red darken-4" type="submit">Login
+                                        <button class="btn waves-effect waves-light red darken-4" type="submit">Log in
 											<i class="material-icons right">send</i>
 										</button>
                                     </div>

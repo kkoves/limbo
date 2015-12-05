@@ -191,9 +191,6 @@ and open the template in the editor.
 									}
 								}
 							?>
-							<!-- <option value="1">Lost</option>
-							<option value="2">Found</option>
-							<option value="3">Claimed</option> -->
 						</select>
 					</div>
 				</div>

@@ -76,7 +76,7 @@ function show_records($dbc) {
 
     # Show results, if query succeeded
     if( $results )
-    {
+    {	
         echo '<table>';
         echo '<tr>';
         echo '<th>Title</th>';
@@ -111,6 +111,154 @@ function show_records($dbc) {
     }
 }
 
+# Shows the lost items in stuff table of limbo_db
+function show_records_found($dbc) {
+    #$locations = get_locations();
+    
+	# Create a query to get location, title, date, category, and status, sorted by date
+    $query = 'SELECT * FROM stuff WHERE status=1 ORDER BY id DESC';
+
+    # Execute the query
+    $results = mysqli_query( $dbc , $query );
+    
+    #Output SQL errors, if any
+    check_results($results);
+
+    # Show results, if query succeeded
+    if( $results )
+    {	
+        echo '<table>';
+        echo '<tr>';
+		echo '<th>ID</th>';
+        echo '<th>Title</th>';
+        echo '<th>Location</th>';
+        echo '<th>Date</th>';
+        echo '<th>Category</th>';
+        echo '<th>Status</th>';
+        echo '</tr>';
+
+        # For each row result, generate a table row
+        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
+        {
+            #$location = $locations[ $row['location_id'] ];
+            $location = get_location($row['location_id']);
+            $date = format_date($row['create_date'], "m/d/Y");
+            $category = get_category($row['category']);
+            
+            echo '<tr>';
+			echo '<th>' . $row['id'] . '</th>';
+            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . $location . '</td>';
+            echo '<td>' . $date . '</td>';
+            echo '<td>' . $category . '</td>';
+            echo '<td>' . $row['status'] . '</td>';
+            echo '</tr>';
+        }
+
+        # End the table
+        echo '</table>';
+
+        # Free up the results in memory
+        mysqli_free_result( $results );
+    }
+}
+
+# Shows the lost items in stuff table of limbo_db
+function show_records_lost($dbc) {
+    #$locations = get_locations();
+    
+	# Create a query to get location, title, date, category, and status, sorted by date
+    $query = 'SELECT * FROM stuff WHERE status=2 ORDER BY id DESC';
+
+    # Execute the query
+    $results = mysqli_query( $dbc , $query );
+    
+    #Output SQL errors, if any
+    check_results($results);
+
+    # Show results, if query succeeded
+    if( $results )
+    {	
+        echo '<table>';
+        echo '<tr>';
+		echo '<th>ID</th>';
+        echo '<th>Title</th>';
+        echo '<th>Location</th>';
+        echo '<th>Date</th>';
+        echo '<th>Category</th>';
+        echo '<th>Status</th>';
+        echo '</tr>';
+
+        # For each row result, generate a table row
+        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
+        {
+            #$location = $locations[ $row['location_id'] ];
+            $location = get_location($row['location_id']);
+            $date = format_date($row['create_date'], "m/d/Y");
+            $category = get_category($row['category']);
+            
+            echo '<tr>';
+			echo '<th>' . $row['id'] . '</th>';
+            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . $location . '</td>';
+            echo '<td>' . $date . '</td>';
+            echo '<td>' . $category . '</td>';
+            echo '<td>' . $row['status'] . '</td>';
+            echo '</tr>';
+        }
+
+        # End the table
+        echo '</table>';
+
+        # Free up the results in memory
+        mysqli_free_result( $results );
+    }
+}
+
+# Filter Table by Location
+/*function filter_location($id){
+	global $dbc;
+	
+	$query = 'SELECT * FROM stuff WHERE location_id=' . $id;
+	
+	$results = mysqli_query($dbc, $query);
+    check_results($results);
+	
+	if ($results){
+		
+		echo '<table>';
+        echo '<tr>';
+        echo '<th>Title</th>';
+        echo '<th>Location</th>';
+        echo '<th>Date</th>';
+        echo '<th>Category</th>';
+        echo '<th>Status</th>';
+        echo '</tr>';
+
+        # For each row result, generate a table row
+        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
+        {
+            #$location = $locations[ $row['location_id'] ];
+            $location = get_location($row['location_id']);
+            $date = format_date($row['create_date'], "m/d/Y");
+            $category = get_category($row['category']);
+            
+            echo '<tr>';
+            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . $location . '</td>';
+            echo '<td>' . $date . '</td>';
+            echo '<td>' . $category . '</td>';
+            echo '<td>' . $row['status'] . '</td>';
+            echo '</tr>';
+        }
+
+        # End the table
+        echo '</table>';
+
+        # Free up the results in memory
+        mysqli_free_result( $results );
+	}	
+}*/
 
 # Shows a single record
 function show_record($id) {
@@ -217,6 +365,31 @@ function show_record($id) {
         }
         echo '</table>';
     }
+}
+
+function show_users($id){
+	global $dbc;
+    
+    $query = 'SELECT * FROM users';
+    
+    $results = mysqli_query($dbc, $query);
+    check_results($results);
+	
+	if($results){
+		echo '<table>';
+        echo '<th>Username</th>';
+        echo '<th>Password</th>';
+        echo '<th>Registered Date</th>';
+		
+		while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)){
+			echo '<tr>';
+				echo '<td>' . $row['user'] . '</td>';
+				echo '<td>' . $row['pass'] . '</td>';
+				echo '<td>' . $row['reg_date'] . '</td>';
+			echo '</tr>';
+		}
+		echo '</table>';
+	}
 }
 
 # Inserts a lost/found item into limbo_db from $_POST

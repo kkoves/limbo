@@ -11,12 +11,26 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <!-- Compiled and minified JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
         <script>
-            $(".button-collapse show-on-large").sideNav();
+            $(document).ready(function(){
+                // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+                $('.modal-trigger').leanModal();
+				$('select').material_select();
+                
+                var str = window.location.href;
+                
+                if(str.indexOf("?id=") > -1)
+                    $('#modal1').openModal();
+                /*if(window.location == "http://localhost/Assignments/Assignment%204/User/index.php")
+                    $('#modal1').closeModal();*/
+                
+                $(".button-collapse show-on-large").sideNav();
+            });
         </script>
         <script>
             function startTime() {
@@ -25,12 +39,18 @@ and open the template in the editor.
                 document.getElementById('clock').innerHTML = n;
                 var t = setTimeout(startTime, 500);
             }
+            
             function checkTime(i) {
                 if (i < 10) {
                     i = "0" + i
                 }
                 ;  // add zero in front of numbers < 10
                 return i;
+            }
+            
+            function modalClick() {
+                document.getElementById("modal1").click();
+                var time = setTimeout(modalClick, 3000);
             }
         </script>
         <style>
@@ -41,12 +61,14 @@ and open the template in the editor.
                 background-color: #B31B1B;
             }
             #title{
-                padding-left: 5%;
                 font-size: 50px;
             }
             #mainPage{
                 font-size: 20px;
             }
+			.container{
+				padding-left: 5%;
+			}
         </style>
     <body onload="startTime()">
         <header>
@@ -79,9 +101,63 @@ and open the template in the editor.
             </div>
         </header>
         <main>
-            <?php
-                //TODO: implement admin functionality
-            ?>
+            <div class="container">
+			    <!-- Modal dialog for "Lost & Found Item Detail" -->
+				<div id="modal1" class="modal modal-fixed-footer">
+					<div class="modal-content">
+						<h4>Lost/Found Item Detail</h4>
+						<p>
+							<?php
+								require('..\includes/connect_db.php');
+								require('..\includes/helpers.php');
+						
+								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
+									if(isset($_GET['id']))
+										show_record($_GET['id']);
+								}
+							?>
+						</p>
+					</div>
+					<div class="modal-footer">
+						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+					</div>
+				</div>
+                <?php
+                    #Call a helper function (in includes/helpers.php) to list the database contents
+                    show_users($dbc);
+                ?>
+				<br/><br/>
+				<table>
+				<th>Add New Admin</th>
+					<tr>
+						<td>
+							<div class="row">
+								<form class="col s12">
+									<div class="row">
+										<div class="input-field col s3">
+											<i class="material-icons prefix">account_circle</i>
+											<input id="icon_prefix" type="text" class="validate">
+											<label for="icon_prefix">Username</label>
+										</div>
+										<div class="input-field col s3">
+											<i class="material-icons prefix">lock_outline</i>
+											<input id="icon_telephone" type="tel" class="validate">
+											<label for="icon_telephone">Password</label>
+										</div>
+									</div>
+									<div class="row">
+										<div class="input-field col s3">
+											<button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+												<i class="material-icons right">send</i>
+											</button>		
+										</div>
+									</div>
+								</form>
+							</div>
+						</td>
+					</tr>
+				</table>
+            </div>
         </main>
     </body>
 </html>

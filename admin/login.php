@@ -33,8 +33,6 @@ and open the template in the editor.
                         alert('Closed');
                     } // Callback for Modal close
                 });
-                // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-                $('#modal1').openModal();
             });
 
             function startTime() {
@@ -51,6 +49,30 @@ and open the template in the editor.
                 return i;
             }
         </script>
+		<script>
+			<?php
+				# Connect to MySQL server and the database
+				require( '../includes/connect_db.php' ) ;
+
+				# Connect to MySQL server and the database
+				require( '../includes/prints_login_tools.php' ) ;
+
+				if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
+
+					$user = $_POST['name'];
+					$pass = $_POST['pass'];
+    
+					$pid = validate($user, $pass);
+
+					if($pid == -1)
+						echo '<p style=color:red>Login failed, please try again.</p>';
+
+				else
+					load('index.php', $pid);
+				}
+			?>
+		</script>
+
         <style>
             nav{
                 background-color: #B31B1B;
@@ -68,6 +90,9 @@ and open the template in the editor.
             #content{
                 padding-left: 5%;
             }
+			#form{
+				padding-left: 5%;
+			}
         </style>
     <body onload="startTime()">
         <header>
@@ -98,36 +123,29 @@ and open the template in the editor.
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>
         </header>
-        <main>
-            <!-- Modal Trigger -->
-            <a class="modal-trigger waves-effect waves-light btn" href="#modal1">Modal</a>
-
-            <!-- Modal Structure -->
-            <div id="modal1" class="modal modal-fixed-footer">
-                <div class="modal-content">
-                    <h5>Welcome Administrator, Please Login to Continue</h5>
-                    <div id="form" class="row">
-                        <form class="col s12">
-                            <div class="row">
-                                <div class="input-field col s6">
-                                    <input id="userName" type="text" class="validate">
-                                    <label for="userName">Username</label>
+        <main id="content">	
+			<div class="container">
+                <div class="row">
+                    <div class="col s12">
+                        <div id="foundItemForm" class="row">
+                            <form class="col s12" action="found.php" method="POST">
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        <input required placeholder="Username" name="name" type="text" class="validate">
+                                        <label for="title">Username</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="input-field col s6">
-                                    <input id="password" type="text" class="validate">
-                                    <label for="password">Password</label>
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        <input required placeholder="Password" name="pass" type="password" class="validate">
+                                        <label for="first_name">Password</label>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Agree</a> -->
-                </div>
             </div>
-            
         </main>
     </body>
 </html>

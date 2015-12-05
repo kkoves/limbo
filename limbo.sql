@@ -121,6 +121,18 @@ INSERT INTO categories(id, name)
           (4, "Jewelry"),
           (5, "Other"),
           (6, "Bags");
+
+# Create status table
+CREATE TABLE IF NOT EXISTS status(
+	id    	INT   	NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	status	TEXT	NOT NULL
+);
+
+# Populate status table
+INSERT INTO status(id, status)
+	VALUES(1, "Found"),
+		  (2, "Lost"),
+		  (3, "Claimed");
            
 # Print table definitions and contents to double-check everything
 
@@ -135,3 +147,6 @@ SELECT * FROM locations ORDER BY short_name ASC;
 
 EXPLAIN categories;
 SELECT * FROM categories;
+
+EXPLAIN status;
+SELECT * FROM status;

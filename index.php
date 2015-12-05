@@ -130,25 +130,70 @@ and open the template in the editor.
 					<div class="input-field col s3">
 						<select>
 							<option value="" disabled selected style="color:Gray">Location</option>
-							<option value="1">Option 1</option>
-							<option value="2">Option 2</option>
-							<option value="3">Option 3</option>
+							<?php
+								#Query database for campus locations
+								$query = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';
+								
+								#Execute query
+								$results = mysqli_query($dbc, $query);
+								
+								#Output SQL errors, if any
+								check_results($results);
+								
+								#Populate drop-down list, if we got results from the query
+								if($results) {
+									while($row = mysqli_fetch_array($results , MYSQLI_ASSOC)) {
+										echo '<option value="' . $row['id'] . '">' . $row['short_name'] . '</option>';
+									}
+								}
+							?>
 						</select>
 					</div>
 					<div class="input-field col s3">
 						<select>
 							<option value="" disabled selected style="color:Gray">Category</option>
-							<option value="1">Option 1</option>
-							<option value="2">Option 2</option>
-							<option value="3">Option 3</option>
+							<?php
+								#Query database for item categories
+								$query = 'SELECT * FROM categories ORDER BY name ASC';
+								
+								#Execute query
+								$results = mysqli_query($dbc, $query);
+								
+								#Output SQL errors, if any
+								check_results($results);
+								
+								#Populate drop-down list, if we got results from the query
+								if($results) {
+									while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
+										echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
+									}
+								}
+							?>
 						</select>
 					</div>
 					<div class="input-field col s3">
 						<select>
 							<option value="" disabled selected>Status</option>
-							<option value="1">Lost</option>
+							<?php
+								#Query database for item categories
+								$query = 'SELECT * FROM status ORDER BY id ASC';
+								
+								#Execute query
+								$results = mysqli_query($dbc, $query);
+								
+								#Output SQL errors, if any
+								check_results($results);
+								
+								#Populate drop-down list, if we got results from the query
+								if($results){
+									while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
+										echo '<option value="' . $row['id'] . '">' . $row['status'] . '</option>';
+									}
+								}
+							?>
+							<!-- <option value="1">Lost</option>
 							<option value="2">Found</option>
-							<option value="3">Claimed</option>
+							<option value="3">Claimed</option> -->
 						</select>
 					</div>
 				</div>

@@ -64,7 +64,7 @@ and open the template in the editor.
 				$pid = validate($user, $pass);
 
 				if($pid == -1)
-					echo '<script>$(document).ready(function () {$("#error").html("Login Failed. Please try again...");});</script>';
+					echo '<script>$(document).ready(function () {$("#error").html("Login failed, please try again.");});</script>';
 
 			else
 				load('index.php', $pid);
@@ -131,7 +131,7 @@ and open the template in the editor.
                             <form class="col s12" action="login.php" method="POST">
                                 <div class="row">
                                     <div class="input-field col s6">
-                                        <input required placeholder="Username" name="name" type="text" class="validate">
+                                        <input required placeholder="Username" name="name" type="text" class="validate" autofocus>
                                         <label for="title">Username</label>
                                     </div>
                                 </div>

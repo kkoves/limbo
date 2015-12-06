@@ -53,6 +53,19 @@ and open the template in the editor.
                 var time = setTimeout(modalClick, 3000);
             }
         </script>
+		<?php
+			require('../includes/connect_db.php');
+			require('../includes/helpers.php');
+			
+			if(isset($_GET['delete'])){
+				delete_user($_GET['delete']);
+			}
+		?>
+		<?php
+            if($_SERVER['REQUEST_METHOD'] == 'POST') {
+				add_admin(); // Adds a new admin along with the current timestamp
+			}
+        ?>
         <style>
             nav{
                 background-color: #B31B1B;
@@ -108,9 +121,6 @@ and open the template in the editor.
 						<h4>Lost/Found Item Detail</h4>
 						<p>
 							<?php
-								require('..\includes/connect_db.php');
-								require('..\includes/helpers.php');
-						
 								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
 									if(isset($_GET['id']))
 										show_record($_GET['id']);
@@ -129,26 +139,32 @@ and open the template in the editor.
 				<br/><br/>
 				<table>
 				<th>Add New Admin</th>
+				<tr id="error" style='color:red'></tr>
 					<tr>
 						<td>
 							<div class="row">
-								<form class="col s12">
+								<form class="col s12" action="index.php" method="POST">
 									<div class="row">
 										<div class="input-field col s3">
 											<i class="material-icons prefix">account_circle</i>
-											<input id="icon_prefix" type="text" class="validate">
-											<label for="icon_prefix">Username</label>
+											<input name="user" id="user" type="text" class="validate" value="<?php if(isset($_POST['user'])) echo $_POST['user']; ?>">
+											<label for="user">Username</label>
 										</div>
 										<div class="input-field col s3">
 											<i class="material-icons prefix">lock_outline</i>
-											<input id="icon_telephone" type="tel" class="validate">
-											<label for="icon_telephone">Password</label>
+											<input name="pass" id="pass" type="password" class="validate">
+											<label for="pass">Password</label>
+										</div>
+										<div class="input-field col s3">
+											<i class="material-icons prefix">lock_outline</i>
+											<input name="pass_confirm" id="pass_confirm" type="password" class="validate">
+											<label for="pass_confirm">Confirm Password</label>
 										</div>
 									</div>
 									<div class="row">
 										<div class="input-field col s3">
-											<button class="btn waves-effect waves-light red darken-4" type="submit">Submit
-												<i class="material-icons right">send</i>
+											<button class="btn waves-effect waves-light red darken-4" type="submit">Add
+												<i class="large material-icons right">add</i>
 											</button>		
 										</div>
 									</div>

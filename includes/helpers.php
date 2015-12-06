@@ -384,6 +384,7 @@ function show_users($id){
         echo '<th>Username</th>';
         echo '<th>Password</th>';
         echo '<th>Registered Date</th>';
+		echo '<th style="text-align:center">Delete User</th>';
 		
 		
 		while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)){
@@ -391,6 +392,8 @@ function show_users($id){
 				echo '<td>' . $row['user'] . '</td>';
 				echo '<td>' . $row['pass'] . '</td>';
 				echo '<td>' . $row['reg_date'] . '</td>';
+				if($row['user'] !== 'admin')
+					echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="index.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
 				
 			echo '</tr>';
 		}
@@ -398,7 +401,7 @@ function show_users($id){
 	}
 }
 
-#Deletes an Item from the database
+# Deletes an Item from the database
 function delete_item($id){
 	global $dbc;
 	
@@ -407,6 +410,47 @@ function delete_item($id){
 	$results = mysqli_query($dbc, $query);
     check_results($results);
 	
+}
+
+# Deletes an Item from the database
+function delete_user($id){
+	global $dbc;
+	
+	$query = 'DELETE FROM users WHERE id=' .$id;
+	
+	$results = mysqli_query($dbc, $query);
+    check_results($results);
+	
+}
+
+# Adds a new admin to the system
+function add_admin(){
+	global $dbc;
+	
+	$user = $_POST['user'];
+	$pass = $_POST['pass'];
+	$pass_confirm = $_POST['pass_confirm'];
+	
+	
+	if($pass !== $pass_confirm)
+		echo '<script>$(document).ready(function () {$("#error").html("&nbsp; Error: Password fields do not match");});</script>';
+	else {
+		$query = "INSERT INTO users(user, pass, reg_date) VALUES(\"$user\", \"$pass\", NOW())";
+	
+		#Show query if debugging is enabled (at the top of this file)
+		#show_query($query);
+
+		#Get results of SQL query
+		$results = mysqli_query($dbc,$query);
+		
+		#Output SQL errors, if any
+		check_results($results);
+		
+		return $results ;
+	}
+	
+	//return false on failure
+	return false;
 }
 
 # Inserts a lost/found item into limbo_db from $_POST

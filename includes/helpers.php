@@ -427,13 +427,21 @@ function delete_user($id){
 function add_admin(){
 	global $dbc;
 	
+	$options = [
+		'cost' => 12,
+		'salt' => 'PkRMWmhrzL3qFJbmur9KjZhg7chW4TeFnm55B25V2zsZ8W7RJDvJaVESCrhqFcxRL47ZbvKMtJrDwCyRUwKCjEnuybE6aGcB5NR97WW7bDqQHP5jLnVhtZqkPu5u2hmhMKeC9kPmqn3cNp9pKwcu5Bfha4hyAbHW42SrdydRK4uCCEYtNczgN9EGhm2c37d2AmWtS4sat9CxFjdK7w25ydCrfA5GA9PWEVEd3TaVHCkjqz22avgY7HuAEVKHUTyb',
+	];
+	
 	$user = $_POST['user'];
-	$pass = $_POST['pass'];
-	$pass_confirm = $_POST['pass_confirm'];
+	$pass = password_hash($_POST['pass'], PASSWORD_BCRYPT, $options);
+	$pass_confirm = password_hash($_POST['pass'], PASSWORD_BCRYPT, $options);
 	
 	
-	if($pass !== $pass_confirm)
+	if($pass !== $pass_confirm) {
 		echo '<script>$(document).ready(function () {$("#error").html("&nbsp; Error: Password fields do not match");});</script>';
+		echo '<script>$(document).ready(function () {$("#pass_check").html("&nbsp;' . $pass . '");});</script>';
+		echo '<script>$(document).ready(function () {$("#pass_check_confirm").html("&nbsp;' . $pass_confirm . '");});</script>';
+	}
 	else {
 		$query = "INSERT INTO users(user, pass, reg_date) VALUES(\"$user\", \"$pass\", NOW())";
 	

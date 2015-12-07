@@ -60,14 +60,22 @@ and open the template in the editor.
 
 				$user = $_POST['name'];
 				$pass = $_POST['pass'];
+				
+				$options = [
+					'cost' => 12,
+					'salt' => 'PkRMWmhrzL3qFJbmur9KjZhg7chW4TeFnm55B25V2zsZ8W7RJDvJaVESCrhqFcxRL47ZbvKMtJrDwCyRUwKCjEnuybE6aGcB5NR97WW7bDqQHP5jLnVhtZqkPu5u2hmhMKeC9kPmqn3cNp9pKwcu5Bfha4hyAbHW42SrdydRK4uCCEYtNczgN9EGhm2c37d2AmWtS4sat9CxFjdK7w25ydCrfA5GA9PWEVEd3TaVHCkjqz22avgY7HuAEVKHUTyb',
+				];
+				
+				$pass = password_hash($pass, PASSWORD_BCRYPT, $options);
 
 				$pid = validate($user, $pass);
 
-				if($pid == -1)
+				if($pid == -1){
 					echo '<script>$(document).ready(function () {$("#error").html("Login failed, please try again.");});</script>';
-
-			else
-				load('index.php', $pid);
+					echo '<script>$(document).ready(function () {$("#pass_check").html("' . $pass . '");});</script>';
+				}
+				else
+					load('index.php', $pid);
 			}
 		?>
 
@@ -127,6 +135,7 @@ and open the template in the editor.
                 <div class="row">
                     <div class="col s12">
 						<div id="error" style="color:Red"></div>
+						<div id="pass_check"></div>
                         <div id="foundItemForm" class="row">
                             <form class="col s12" action="login.php" method="POST">
                                 <div class="row">

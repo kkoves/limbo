@@ -64,6 +64,7 @@ and open the template in the editor.
 		<?php
             if($_SERVER['REQUEST_METHOD'] == 'POST') {
 				add_admin(); // Adds a new admin along with the current timestamp
+				$_POST = array();
 			}
         ?>
         <style>
@@ -121,10 +122,8 @@ and open the template in the editor.
 						<h4>Lost/Found Item Detail</h4>
 						<p>
 							<?php
-								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
-									if(isset($_GET['id']))
-										show_record($_GET['id']);
-								}
+								if(isset($_GET['id']))
+									show_record($_GET['id']);
 							?>
 						</p>
 					</div>
@@ -149,17 +148,17 @@ and open the template in the editor.
 									<div class="row">
 										<div class="input-field col s3">
 											<i class="material-icons prefix">account_circle</i>
-											<input name="user" id="user" type="text" class="validate" value="<?php if(isset($_POST['user'])) echo $_POST['user']; ?>">
+											<input required name="user" id="user" type="text" class="validate" value="<?php if(isset($_POST['user'])) echo $_POST['user']; ?>">
 											<label for="user">Username</label>
 										</div>
 										<div class="input-field col s3">
 											<i class="material-icons prefix">lock_outline</i>
-											<input name="pass" id="pass" type="password" class="validate">
+											<input required name="pass" id="pass" type="password" class="validate">
 											<label for="pass">Password</label>
 										</div>
 										<div class="input-field col s3">
 											<i class="material-icons prefix">lock_outline</i>
-											<input name="pass_confirm" id="pass_confirm" type="password" class="validate">
+											<input required name="pass_confirm" id="pass_confirm" type="password" class="validate">
 											<label for="pass_confirm">Confirm Password</label>
 										</div>
 									</div>

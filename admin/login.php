@@ -57,13 +57,21 @@ and open the template in the editor.
 			require( '../includes/limbo_login_tools.php' ) ;
 
 			if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
-
+				global $dbc;
+				
 				$user = $_POST['name'];
 				$pass = $_POST['pass'];
+
+				$query = 'SELECT salt FROM users WHERE user="' . $user . '"';
+				
+				$results = mysqli_query($dbc, $query);
+				check_results($results);
+				
+				$results = mysqli_fetch_array($results);
 				
 				$options = [
 					'cost' => 12,
-					'salt' => 'PkRMWmhrzL3qFJbmur9KjZhg7chW4TeFnm55B25V2zsZ8W7RJDvJaVESCrhqFcxRL47ZbvKMtJrDwCyRUwKCjEnuybE6aGcB5NR97WW7bDqQHP5jLnVhtZqkPu5u2hmhMKeC9kPmqn3cNp9pKwcu5Bfha4hyAbHW42SrdydRK4uCCEYtNczgN9EGhm2c37d2AmWtS4sat9CxFjdK7w25ydCrfA5GA9PWEVEd3TaVHCkjqz22avgY7HuAEVKHUTyb',
+					'salt' => $results[0],
 				];
 				
 				$pass = password_hash($pass, PASSWORD_BCRYPT, $options);

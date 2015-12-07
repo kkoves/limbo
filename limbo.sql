@@ -13,12 +13,13 @@ CREATE TABLE IF NOT EXISTS users
 	id		  INT		UNSIGNED  AUTO_INCREMENT  PRIMARY KEY,
 	user	  TEXT		NOT NULL,
 	pass	  TEXT		NOT NULL,
-	reg_date  DATETIME  NOT NULL
+	reg_date  DATETIME  NOT NULL,
+	salt	  TEXT		NOT NULL
 );
 
 # Insert our first admin user into the users table
-INSERT INTO users (user, pass, reg_date)
-	VALUES ("admin", "gaze11e", NOW());
+INSERT INTO users (user, pass, reg_date, salt)
+	VALUES ("admin", "$2y$12$a161bd8b4b7bda7313255uJEXV2e7JysLYdmTJ9yFpJ16LlizHQZS", NOW(), "a161bd8b4b7bda7313255855e3550967f2437dea");
 
 # Create the table that will contain the L&F inventory
 CREATE TABLE IF NOT EXISTS stuff

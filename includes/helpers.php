@@ -427,21 +427,24 @@ function delete_user($id){
 function add_admin(){
 	global $dbc;
 	
+	$random = mt_rand(0, 999999);
+	$random_string = sha1($random);
+	
 	$options = [
 		'cost' => 12,
-		'salt' => 'PkRMWmhrzL3qFJbmur9KjZhg7chW4TeFnm55B25V2zsZ8W7RJDvJaVESCrhqFcxRL47ZbvKMtJrDwCyRUwKCjEnuybE6aGcB5NR97WW7bDqQHP5jLnVhtZqkPu5u2hmhMKeC9kPmqn3cNp9pKwcu5Bfha4hyAbHW42SrdydRK4uCCEYtNczgN9EGhm2c37d2AmWtS4sat9CxFjdK7w25ydCrfA5GA9PWEVEd3TaVHCkjqz22avgY7HuAEVKHUTyb',
+		'salt' => $random_string,
 	];
 	
 	$user = $_POST['user'];
 	$pass = password_hash($_POST['pass'], PASSWORD_BCRYPT, $options);
-	$pass_confirm = password_hash($_POST['pass'], PASSWORD_BCRYPT, $options);
+	$pass_confirm = password_hash($_POST['pass_confirm'], PASSWORD_BCRYPT, $options);
 	
 	
 	if($pass !== $pass_confirm) {
 		echo '<script>$(document).ready(function () {$("#error").html("&nbsp; Error: Password fields do not match");});</script>';
 	}
 	else {
-		$query = "INSERT INTO users(user, pass, reg_date) VALUES(\"$user\", \"$pass\", NOW())";
+		$query = "INSERT INTO users(user, pass, reg_date, salt) VALUES(\"$user\", \"$pass\", NOW(), \"$options[salt]\")";
 	
 		#Show query if debugging is enabled (at the top of this file)
 		#show_query($query);

@@ -439,8 +439,6 @@ function add_admin(){
 	
 	if($pass !== $pass_confirm) {
 		echo '<script>$(document).ready(function () {$("#error").html("&nbsp; Error: Password fields do not match");});</script>';
-		echo '<script>$(document).ready(function () {$("#pass_check").html("&nbsp;' . $pass . '");});</script>';
-		echo '<script>$(document).ready(function () {$("#pass_check_confirm").html("&nbsp;' . $pass_confirm . '");});</script>';
 	}
 	else {
 		$query = "INSERT INTO users(user, pass, reg_date) VALUES(\"$user\", \"$pass\", NOW())";

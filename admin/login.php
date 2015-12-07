@@ -72,7 +72,6 @@ and open the template in the editor.
 
 				if($pid == -1){
 					echo '<script>$(document).ready(function () {$("#error").html("Login failed, please try again.");});</script>';
-					echo '<script>$(document).ready(function () {$("#pass_check").html("' . $pass . '");});</script>';
 				}
 				else
 					load('index.php', $pid);

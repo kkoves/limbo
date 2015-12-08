@@ -150,17 +150,14 @@ and open the template in the editor.
 						<h4>Update Item Information</h4>
 						<p>
 							<?php
-								
-								
 								if(isset($_GET['updateID'])) {
 									$_POST['updateID'] = $_GET['updateID'];
 									update_item_form($_GET['updateID']);
 								}
 								
 								if($_SERVER['REQUEST_METHOD'] == 'POST') {
-									if(valid_form()) {
+									if(valid_form())
 										update_record();
-									}
 								}
 							?>
 						</p>

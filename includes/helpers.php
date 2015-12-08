@@ -1,5 +1,5 @@
 <?php
-$debug = true;
+$debug = false;
 
 # Get locations on Marist campus, make array
 /*function get_locations() {
@@ -470,18 +470,16 @@ function add_admin(){
 }
 
 function update_record(){
-	
-	$query = 'UPDATE stuff SET ' . ' location_id=' . $_POST['location'] . ', title=' . $_POST['title'] . ', description=' . $_POST['description'] . ', category=' . $_POST['category'] . ', update_date=NOW()' . ', lost_date=' . $_POST['lost_date'] . ', found_date=' . $_POST['found_date'] . ', room=' . $_POST['room'] . ', email=' . $_POST['email'] . ', phone=' . $_POST['phone'] . ', photo=' . $_POST['photo'] . ', owner=' . $_POST['owner_full_name'] . ', finder=' . $_POST['finder_full_name'] . ', status=' . $_POST['status'] . ' WHERE id=' . $_POST['updateID'];
-	
-	show_query($query);
+	global $dbc, $debug;
+    
+	$query = 'UPDATE stuff SET ' . ' location_id=' . $_POST['location'] . ', title="' . $_POST['title'] . '", description="' . $_POST['description'] . '", category=' . $_POST['category'] . ', update_date=NOW()' . ', lost_date="' . $_POST['lost_date'] . '", found_date="' . $_POST['found_date'] . '", room="' . $_POST['room'] . '", email="' . $_POST['email'] . '", phone="' . $_POST['phone'] . '", photo="' . $_POST['photo'] . '", owner="' . $_POST['owner_full_name'] . '", finder="' . $_POST['finder_full_name'] . '", status="' . $_POST['status'] . '" WHERE id=' . $_POST['updateID'];
 	
 	$results = mysqli_query($dbc, $query);
 	
 	check_results($results);
 	
-	echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . $query . '");});</script>';
-	#echo '<script>document.getElementById("error").innerHTML = "' . $query . '";</script>';
-	echo '<script>$(document).ready(function () {$("#updateID").html("' . $_POST['updateID'] . '");});</script>'; 
+    if($debug)
+        echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . addslashes($query) . '");});</script>';
 }
 
 function update_item_form($id){
@@ -499,9 +497,18 @@ function update_item_form($id){
 		$title = $row['title'];
 		$description = $row['description'];
 		$category_id = $row['category'];
-		$lost_date = $row['lost_date'];
-		$found_date = $row['found_date'];
-		$room = $row['room'];
+        
+        if(!empty($row['lost_date']) && $row['lost_date'] !== '0000-00-00 00:00:00')
+            $lost_date = format_date($row['lost_date'], "Y-m-d");
+		else
+            $lost_date = '0000-00-00';
+        
+        if(!empty($row['found_date']) && $row['found_date'] !== '0000-00-00 00:00:00')
+            $found_date = format_date($row['found_date'], "Y-m-d");
+		else
+            $found_date = '0000-00-00';
+		
+        $room = $row['room'];
 		$email = $row['email'];
 		$phone = $row['phone'];
 		$photo = $row['photo'];
@@ -568,17 +575,58 @@ function update_item_form($id){
 		echo '<label for="room">Room #</label>';
 		echo '</div>';
         echo '</div>';
-        echo '<div class="row">';
-		echo '<div class="input-field col s6">';
-		if($status === "Lost"){
-			echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="lost_date" value="' . format_date($lost_date, "Y-m-d") . '">';
-			echo '<label for="date">Date Lost*</label>';
+        
+        #echo date selection fields, ordered by item's status (e.g., Lost date selection is shown first if item is in Lost status)
+        echo '<div class="row">'; # begin date row
+            if($status === "Lost") {
+                echo '<div class="input-field col s6">'; # begin date col 1
+                echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="lost_date" value="' . $lost_date . '">';
+                echo '<label for="lost_date">Date Lost*</label>';
+                echo '</div>'; # end date col 1
+                
+                echo '<div class="input-field col s6">'; # begin date col 2
+                echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="found_date" value="' . $found_date . '">';
+                echo '<label for="found_date">Date Found*</label>';
+            }
+    
+            if($status === "Found") {
+                echo '<div class="input-field col s6">'; # begin date col 1
+                echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="found_date" value="' . $found_date . '">';
+                echo '<label for="found_date">Date Found*</label>';
+                echo '</div>'; # end date col 1
+                
+                echo '<div class="input-field col s6">'; # begin date col 2
+                echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="lost_date" value="' . $lost_date . '">';
+                echo '<label for="lost_date">Date Lost*</label>';
+            }
+        echo '</div>'; # end date col 2
+        
+        echo '</div>'; # end date row
+		echo '<div class="row">';
+		echo '<div id="status" class="input-field col s6">';
+        echo '<select required name="status">';
+        echo '<option value="" disabled selected>Status</option>';
+		
+		#Query database for status
+        $query4 = 'SELECT * FROM status ORDER BY id ASC';                         
+        #echo '#Execute query';
+        $results4 = mysqli_query($dbc, $query4);   
+        #echo '#Output SQL errors, if any';
+        check_results($results4);      
+        #echo '#Populate drop-down list, if we got results from the query';
+		if($results4) {
+			while($row4 = mysqli_fetch_array($results4 , MYSQLI_ASSOC)) {
+				if($row4['status'] == $status)
+					echo '<option value="' . $row4['status'] . '" selected>' . $row4['status'] . '</option>';
+				else
+					echo '<option value="' . $row4['status'] . '">' . $row4['status'] . '</option>';
+			}
 		}
-		if($status === "Found"){
-			echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="found_date" value="' . format_date($found_date, "Y-m-d") . '">';
-			echo '<label for="date">Date Found*</label>';
-		}
+		
+        echo '</select>';
+        echo '<label>Status*</label>';
         echo '</div>';
+        
         echo '<div id="category" class="input-field col s6">';
         echo '<select required name="category">';
         echo '<option value="" disabled selected>Category</option>';
@@ -602,31 +650,7 @@ function update_item_form($id){
         echo '</select>';
         echo '<label>Item Type*</label>';
         echo '</div>';
-        echo '</div>';
-		echo '<div class="row">';
-		echo '<div id="status" class="input-field col s6">';
-        echo '<select required name="status">';
-        echo '<option value="" disabled selected>Status</option>';
-		
-		#Query database for categories
-        $query4 = 'SELECT * FROM status ORDER BY id ASC';                         
-        #echo '#Execute query';
-        $results4 = mysqli_query($dbc, $query4);   
-        #echo '#Output SQL errors, if any';
-        check_results($results4);      
-        #echo '#Populate drop-down list, if we got results from the query';
-		if($results4) {
-			while($row4 = mysqli_fetch_array($results4 , MYSQLI_ASSOC)) {
-				if($row4['status'] == $status)
-					echo '<option value="' . $row4['id'] . '" selected>' . $row4['status'] . '</option>';
-				else
-					echo '<option value="' . $row4['id'] . '">' . $row4['status'] . '</option>';
-			}
-		}
-		
-        echo '</select>';
-        echo '<label>Status*</label>';
-        echo '</div>';
+        
 		echo '<div class="input-field col s6">';
 		echo '<input hidden name="updateID" type="text" class="validate" value="' . $item_id . '">';
 		echo '<label hidden for="updateID">ID #</label>';
@@ -804,6 +828,16 @@ function valid_form() {
     $name = trim($first_name) . ' ' . trim($last_name);
     
     $_POST['full_name'] = $name;
+    
+    if(empty($_POST['found_date']))
+        $found_date = "0000-00-00";
+    else
+        $found_date = $_POST['found_date'];
+    
+    if(empty($_POST['lost_date']))
+        $lost_date = "0000-00-00";
+    else
+        $lost_date = $_POST['lost_date'];
     
     $phone = $_POST['phone'];
     

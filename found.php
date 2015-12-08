@@ -24,8 +24,10 @@ and open the template in the editor.
             require('includes/connect_db.php');
             
             if($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if(valid_form()) // if form is valid
+                if(valid_form()) { // if form is valid 
 					insert_item('Found', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
+					$_POST = array();
+				}
 			}
         ?>
         <script>
@@ -136,7 +138,7 @@ and open the template in the editor.
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
                                         <input name="phone" type="number" class="validate" value="<?php if(isset($_POST['phone'])) echo $_POST['phone']; ?>">
-                                        <label for="email">Phone #</label>
+                                        <label for="phone">Phone #</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -165,7 +167,7 @@ and open the template in the editor.
                                     </div>
 									<div class="input-field col s3">
 										<input required name="room" type="text" class="validate" value="<?php if(isset($_POST['room'])) echo $_POST['room']; ?>">
-										<label for="room">Room #*</label>
+										<label for="room">Room #</label>
 									</div>
                                 </div>
                                 <div class="row">

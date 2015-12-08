@@ -27,8 +27,11 @@ and open the template in the editor.
                 if(valid_form()) { // if form is valid
 					insert_item('Lost', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
                     
-                    if(!empty($_POST['photo']))
+                    if(!empty($_POST['photo'])){
                         upload_picture();
+					}
+					
+					$_POST = array();
                 }
 			}
         ?>
@@ -140,7 +143,7 @@ and open the template in the editor.
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
                                         <input name="phone" type="number" class="validate" value="<?php if(isset($_POST['phone'])) echo $_POST['phone']; ?>">
-                                        <label for="email">Phone #</label>
+                                        <label for="phone">Phone #</label>
                                     </div>
                                 </div>
                                 <div class="row">

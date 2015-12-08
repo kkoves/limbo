@@ -139,8 +139,6 @@ and open the template in the editor.
 				<table>
 				<th>Add New Admin</th>
 				<tr id="error" style='color:red'></tr>
-				<tr id="pass_check"></tr>
-				<tr id="pass_check_confirm"></tr>
 					<tr>
 						<td>
 							<div class="row">

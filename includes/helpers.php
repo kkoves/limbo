@@ -135,6 +135,7 @@ function show_records_found($dbc) {
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
+		echo '<th style="text-align:center">Update Item</th>';
 		echo '<th style="text-align:center">Delete Item</th>';
         echo '</tr>';
 
@@ -153,6 +154,7 @@ function show_records_found($dbc) {
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
+			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="found.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
 			echo '<td style="text-align:center;">' . '<a class="material-icons" style="color:#9e9e9e" href="found.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
             echo '</tr>';
         }
@@ -189,6 +191,7 @@ function show_records_lost($dbc) {
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
+		echo '<th style="text-align:center">Update Item</th>';
 		echo '<th style="text-align:center">Delete Item</th>';
         echo '</tr>';
 
@@ -207,6 +210,7 @@ function show_records_lost($dbc) {
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
+			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
 			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
             echo '</tr>';
         }
@@ -369,6 +373,8 @@ function show_record($id) {
         }
         echo '</table>';
     }
+	
+	mysqli_free_result($results);
 }
 
 function show_users($id){
@@ -382,7 +388,7 @@ function show_users($id){
 	if($results){
 		echo '<table>';
         echo '<th>Username</th>';
-        echo '<th>Password</th>';
+		echo '<th>Password</th>';
         echo '<th>Registered Date</th>';
 		echo '<th style="text-align:center">Delete User</th>';
 		
@@ -399,6 +405,8 @@ function show_users($id){
 		}
 		echo '</table>';
 	}
+	
+	mysqli_free_result($results);
 }
 
 # Deletes an Item from the database
@@ -435,10 +443,9 @@ function add_admin(){
 		'salt' => $random_string,
 	];
 	
-	$user = $_POST['user'];
+	$user = trim($_POST['user']);
 	$pass = password_hash($_POST['pass'], PASSWORD_BCRYPT, $options);
 	$pass_confirm = password_hash($_POST['pass_confirm'], PASSWORD_BCRYPT, $options);
-	
 	
 	if($pass !== $pass_confirm) {
 		echo '<script>$(document).ready(function () {$("#error").html("&nbsp; Error: Password fields do not match");});</script>';
@@ -460,6 +467,205 @@ function add_admin(){
 	
 	//return false on failure
 	return false;
+}
+
+function update_record(){
+	
+	$query = 'UPDATE stuff SET ' . ' location_id=' . $_POST['location'] . ', title=' . $_POST['title'] . ', description=' . $_POST['description'] . ', category=' . $_POST['category'] . ', update_date=NOW()' . ', lost_date=' . $_POST['lost_date'] . ', found_date=' . $_POST['found_date'] . ', room=' . $_POST['room'] . ', email=' . $_POST['email'] . ', phone=' . $_POST['phone'] . ', photo=' . $_POST['photo'] . ', owner=' . $_POST['owner_full_name'] . ', finder=' . $_POST['finder_full_name'] . ', status=' . $_POST['status'] . ' WHERE id=' . $_POST['updateID'];
+	
+	show_query($query);
+	
+	$results = mysqli_query($dbc, $query);
+	
+	check_results($results);
+	
+	echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . $query . '");});</script>';
+	#echo '<script>document.getElementById("error").innerHTML = "' . $query . '";</script>';
+	echo '<script>$(document).ready(function () {$("#updateID").html("' . $_POST['updateID'] . '");});</script>'; 
+}
+
+function update_item_form($id){
+	global $dbc;
+	
+	$query = 'SELECT * FROM stuff WHERE id=' . $id;
+    
+    $results = mysqli_query($dbc, $query);
+    check_results($results);
+	
+	while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
+		# Assigns queries current values to variables.
+		$item_id = $row['id'];
+		$location_id = $row['location_id'];
+		$title = $row['title'];
+		$description = $row['description'];
+		$category_id = $row['category'];
+		$lost_date = $row['lost_date'];
+		$found_date = $row['found_date'];
+		$room = $row['room'];
+		$email = $row['email'];
+		$phone = $row['phone'];
+		$photo = $row['photo'];
+		$owner = $row['owner'];
+		$finder = $row['finder'];
+		$status = $row['status'];
+
+		#echo '<script>$(document).ready(function () {var date = new Date();var year = date.getFullYear();$("select").material_select();$(".datepicker").pickadate({selectMonths: true,selectYears: 2,max: year,format: "yyyy-mm-dd"});$("#description").val(' . $description . ');$("#description").trigger("autoresize");});</script>';
+		echo '<div class="row">';
+        echo '<form enctype="multipart/form-data" class="col s12" action="../admin/lost.php" method="POST">';
+        echo '<div class="row">';
+        echo '<div class="input-field col s12">';
+        echo '<input required placeholder="Submission Title" name="title" type="text" class="validate" value="' . $title . '">';
+        echo '<label for="title">Title*</label>';
+        echo '</div>';
+        echo '</div>';
+        echo '<div class="row">';
+        echo '<div class="input-field col s12">';
+		if(!empty($row['finder']))
+			echo '<input required placeholder="Finder\'s Name" name="finder_full_name" type="text" class="validate" value="' . $finder . '">';
+		if(!empty($row['owner']))
+			echo '<input required placeholder="Owner\'s Name" name="owner_full_name" type="text" class="validate" value="' . $owner . '">';
+        echo '<label for="full_name">Oweners\'s Name*</label>';
+        echo '</div>';
+        echo '</div>';
+        echo '<div class="row">';
+        echo '<div class="input-field col s6">';
+        echo '<i class="material-icons prefix">email</i>';
+        echo '<input required name="email" type="email" class="validate" value="' . $email . '">';
+        echo '<label for="email">Email*</label>';
+        echo '</div>';
+        echo '<div class="input-field col s6">';
+        echo '<i class="material-icons prefix">phone</i>';
+        echo '<input name="phone" type="number" class="validate" value="' . $phone . '">';
+        echo '<label for="phone">Phone #</label>';
+        echo '</div>';
+        echo '</div>';
+        echo '<div class="row">';
+        echo '<div id="building" class="input-field col s6">';
+        echo '<select required name="location">';
+        echo '<option value="" disabled>Building</option>';
+		
+        #Query database for campus locations
+        $query2 = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';                                       
+        #Execute query
+        $results2 = mysqli_query($dbc, $query2);
+        #Output SQL errors, if any
+        check_results($results2);                                   
+        #Populate drop-down list, if we got results from the query
+        if($results2) {
+			while($row2 = mysqli_fetch_array($results2 , MYSQLI_ASSOC)) {
+				if($row2['id'] == $location_id)
+					echo '<option value="' . $row2['id'] . '" selected>' . $row2['short_name'] . '</option>';
+				else
+					echo '<option value="' . $row2['id'] . '">' . $row2['short_name'] . '</option>';
+			}
+        }
+		
+        echo '</select>';
+        echo '<label>Location Lost*</label>';
+        echo '</div>';
+		echo '<div class="input-field col s6">';
+		echo '<input name="room" type="text" class="validate" value="' . $room . '">';
+		echo '<label for="room">Room #</label>';
+		echo '</div>';
+        echo '</div>';
+        echo '<div class="row">';
+		echo '<div class="input-field col s6">';
+		if($status === "Lost"){
+			echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="lost_date" value="' . format_date($lost_date, "Y-m-d") . '">';
+			echo '<label for="date">Date Lost*</label>';
+		}
+		if($status === "Found"){
+			echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="found_date" value="' . format_date($found_date, "Y-m-d") . '">';
+			echo '<label for="date">Date Found*</label>';
+		}
+        echo '</div>';
+        echo '<div id="category" class="input-field col s6">';
+        echo '<select required name="category">';
+        echo '<option value="" disabled selected>Category</option>';
+		
+		#Query database for categories
+        $query3 = 'SELECT * FROM categories ORDER BY name ASC';                         
+        #echo '#Execute query';
+        $results3 = mysqli_query($dbc, $query3);
+        #echo '#Output SQL errors, if any';
+        check_results($results3);
+        #echo '#Populate drop-down list, if we got results from the query';
+		if($results3) {
+			while($row3 = mysqli_fetch_array($results3 , MYSQLI_ASSOC)) {
+				if($row3['id'] == $category_id)
+					echo '<option value="' . $row3['id'] . '" selected>' . $row3['name'] . '</option>';
+				else
+					echo '<option value="' . $row3['id'] . '">' . $row3['name'] . '</option>';
+			}
+		}
+		
+        echo '</select>';
+        echo '<label>Item Type*</label>';
+        echo '</div>';
+        echo '</div>';
+		echo '<div class="row">';
+		echo '<div id="status" class="input-field col s6">';
+        echo '<select required name="status">';
+        echo '<option value="" disabled selected>Status</option>';
+		
+		#Query database for categories
+        $query4 = 'SELECT * FROM status ORDER BY id ASC';                         
+        #echo '#Execute query';
+        $results4 = mysqli_query($dbc, $query4);   
+        #echo '#Output SQL errors, if any';
+        check_results($results4);      
+        #echo '#Populate drop-down list, if we got results from the query';
+		if($results4) {
+			while($row4 = mysqli_fetch_array($results4 , MYSQLI_ASSOC)) {
+				if($row4['status'] == $status)
+					echo '<option value="' . $row4['id'] . '" selected>' . $row4['status'] . '</option>';
+				else
+					echo '<option value="' . $row4['id'] . '">' . $row4['status'] . '</option>';
+			}
+		}
+		
+        echo '</select>';
+        echo '<label>Status*</label>';
+        echo '</div>';
+		echo '<div class="input-field col s6">';
+		echo '<input hidden name="updateID" type="text" class="validate" value="' . $item_id . '">';
+		echo '<label hidden for="updateID">ID #</label>';
+		echo '</div>';
+		echo '</div>';
+        echo '<div class="row">';
+        echo '<div class="input-field col s12">';
+        echo '<div class="row">';
+        echo '<div class="input-field col s12">';
+        echo '<textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>';
+        echo '<label for="textarea1">Description*</label>';
+		echo '<script>$(document).ready(function () {$("#description").val("' . $description . '");});</script>';
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
+        echo '<div class="file-field input-field col s12">';
+        echo '<div class="btn red darken-4">';
+        echo '<span>Photo</span>';
+        echo '<input type="file" name="photo">';
+        echo '</div>';
+        echo '<div class="file-path-wrapper">';
+        echo '<input class="file-path validate" type="text" name="filepath">';
+        echo '</div>';
+        echo '</div>';
+        echo '<br><br><br>';
+        echo '<div align="right" class="row">';
+        echo '<button class="btn waves-effect waves-light red darken-4" type="submit">Submit';
+        echo '<i class="material-icons right">send</i>';
+        echo '</button>';
+        echo '</div>';
+        echo '</form>';
+        echo '</div>';
+	}
+	
+	mysqli_free_result($results);
+	mysqli_free_result($results2);
+	mysqli_free_result($results3);
+	mysqli_free_result($results4);
 }
 
 # Inserts a lost/found item into limbo_db from $_POST

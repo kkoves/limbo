@@ -59,9 +59,10 @@ and open the template in the editor.
 			if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
 				global $dbc;
 				
-				$user = $_POST['name'];
+				$user = trim($_POST['name']);
 				$pass = $_POST['pass'];
 
+				# Queries the database for salt unique to users to use in hash function
 				$query = 'SELECT salt FROM users WHERE user="' . $user . '"';
 				
 				$results = mysqli_query($dbc, $query);

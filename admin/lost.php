@@ -26,10 +26,29 @@ and open the template in the editor.
                 
                 if(str.indexOf("?id=") > -1)
                     $('#modal1').openModal();
+				
+				if(str.indexOf("?updateID=") > -1)
+                    $('#modal2').openModal();
                 /*if(window.location == "http://localhost/Assignments/Assignment%204/User/index.php")
                     $('#modal1').closeModal();*/
                 
                 $(".button-collapse show-on-large").sideNav();
+            });
+			$(document).ready(function () {
+				var date = new Date();
+				var year = date.getFullYear();
+				
+                $('select').material_select();
+                $('.datepicker').pickadate({
+                    selectMonths: true, // Creates a dropdown to control month
+                    selectYears: 2, // Creates a dropdown of 2 years to control year
+					max: year,
+					format: 'yyyy-mm-dd' // Date format
+                });
+                
+                // Auto-fill description field if form submission failed
+                $('#description').val('<?php if(isset($_POST['description'])) echo $_POST['description'] ?>');
+                $('#description').trigger('autoresize');
             });
         </script>
         <script>
@@ -116,10 +135,33 @@ and open the template in the editor.
 						<h4>Lost/Found Item Detail</h4>
 						<p>
 							<?php
-								#require('../includes/limbo_login_tools.php');
-								
 								if(isset($_GET['id']))
 									show_record($_GET['id']);
+							?>
+						</p>
+					</div>
+					<div class="modal-footer">
+						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+					</div>
+				</div>
+				<!-- Modal dialog for "Update Item Information" -->
+				<div id="modal2" class="modal modal-fixed-footer">
+					<div class="modal-content">
+						<h4>Update Item Information</h4>
+						<p>
+							<?php
+								
+								
+								if(isset($_GET['updateID'])) {
+									$_POST['updateID'] = $_GET['updateID'];
+									update_item_form($_GET['updateID']);
+								}
+								
+								if($_SERVER['REQUEST_METHOD'] == 'POST') {
+									if(valid_form()) {
+										update_record();
+									}
+								}
 							?>
 						</p>
 					</div>
@@ -176,6 +218,8 @@ and open the template in the editor.
 						</select>
 					</div>
 				</div>
+				<div id="error" style="color:red"></div>
+				<div id="updateID" style="color:red"></div>
 				<?php
 					
 					#Call a helper function (in includes/helpers.php) to list the database contents

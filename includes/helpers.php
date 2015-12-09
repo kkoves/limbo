@@ -168,14 +168,17 @@ function show_records_found($dbc) {
 }
 
 # Shows a table filtered by location
-function show_category_filter($id){
+function show_category_filter($status, $id, $user){
 	global $dbc;
 	
 	if(!is_numeric($id))
 		return false;
 	
+	else if($status == "all")
+		$query = 'SELECT * FROM stuff WHERE category=' . $id;	
+	
 	else
-		$query = 'SELECT * FROM stuff WHERE status="Lost" AND category=' . $id;
+		$query = 'SELECT * FROM stuff WHERE status="' . $status . '" AND category=' . $id;
 	
 	# Execute the query
     $results = mysqli_query( $dbc , $query );
@@ -192,8 +195,10 @@ function show_category_filter($id){
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
+		if($user !== "user"){
 		echo '<th style="text-align:center">Update Item</th>';
 		echo '<th style="text-align:center">Delete Item</th>';
+		}
         echo '</tr>';
 
         # For each row result, generate a table row
@@ -211,8 +216,10 @@ function show_category_filter($id){
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
-			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
-			echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			if($user !== "user"){
+				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
+				echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			}
 			echo '</tr>';
         }
 
@@ -226,16 +233,20 @@ function show_category_filter($id){
 }
 
 # Shows a table filtered by location
-function show_location_filter($id){
+function show_location_filter($status, $id, $user){
 	global $dbc;
 	
 	if(!is_numeric($id))
 		return false;
+	
+	else if($status == "all")
+		$query = 'SELECT * FROM stuff WHERE location_id=' . $id;
+
 	else
-		$query = 'SELECT * FROM stuff WHERE status="Lost" AND location_id=' . $id;
+		$query = 'SELECT * FROM stuff WHERE status="' . $status . '" AND location_id=' . $id;
 	
 	# Execute the query
-    $results = mysqli_query( $dbc , $query );
+    $results = mysqli_query( $dbc , $query);
 	
 	#Output SQL errors, if any
     check_results($results);
@@ -249,8 +260,10 @@ function show_location_filter($id){
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
-		echo '<th style="text-align:center">Update Item</th>';
-		echo '<th style="text-align:center">Delete Item</th>';
+		if($user !== "user"){
+			echo '<th style="text-align:center">Update Item</th>';
+			echo '<th style="text-align:center">Delete Item</th>';
+		}
         echo '</tr>';
 
         # For each row result, generate a table row
@@ -268,8 +281,81 @@ function show_location_filter($id){
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
+			if($user !== "user"){
 			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
 			echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			}
+			echo '</tr>';
+        }
+
+        # End the table
+        echo '</table>';
+
+        # Free up the results in memory
+        mysqli_free_result( $results );
+	}
+	return true;
+}
+
+# Shows a table filtered by status
+function show_status_filter($status, $user){
+	global $dbc;
+	
+	if(!is_numeric($status))
+		return false;
+	
+	else if($status == 1){
+		$status = "Found";
+		$query = 'SELECT * FROM stuff WHERE status="' . $status . '"';
+	}
+	else if($status == 2){
+		$status = "Lost";
+		$query = 'SELECT * FROM stuff WHERE status="' . $status . '"';
+	}
+
+	/*else
+		$query = 'SELECT * FROM stuff WHERE status=' . $status;*/
+	
+	# Execute the query
+    $results = mysqli_query( $dbc , $query);
+	
+	#Output SQL errors, if any
+    check_results($results);
+	
+	if($results){
+		echo '<table>';
+        echo '<tr>';
+		echo '<th>ID</th>';
+        echo '<th>Title</th>';
+        echo '<th>Location</th>';
+        echo '<th>Date</th>';
+        echo '<th>Category</th>';
+        echo '<th>Status</th>';
+		if($user !== "user"){
+			echo '<th style="text-align:center">Update Item</th>';
+			echo '<th style="text-align:center">Delete Item</th>';
+		}
+        echo '</tr>';
+
+        # For each row result, generate a table row
+        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
+        {
+            #$location = $locations[ $row['location_id'] ];
+            $location = get_location($row['location_id']);
+            $date = format_date($row['create_date'], "m/d/Y");
+            $category = get_category($row['category']);
+            
+            echo '<tr>';
+			echo '<th>' . $row['id'] . '</th>';
+            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=lost.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . $location . '</td>';
+            echo '<td>' . $date . '</td>';
+            echo '<td>' . $category . '</td>';
+            echo '<td>' . $row['status'] . '</td>';
+			if($user !== "user"){
+			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
+			echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			}
 			echo '</tr>';
         }
 

@@ -11,6 +11,7 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <!-- Compiled and minified JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -29,6 +30,16 @@ and open the template in the editor.
                     $('#modal1').closeModal();*/
                 
                 $(".button-collapse show-on-large").sideNav();
+				
+				$('.dropdown-button').dropdown({
+					inDuration: 300,
+					outDuration: 225,
+					constrain_width: true, // Does not change width of dropdown to that of the activator
+					hover: true, // Activate on hover
+					gutter: 0, // Spacing from edge
+					belowOrigin: false, // Displays dropdown below the button
+					alignment: 'left' // Displays dropdown with edge aligned to the left of button
+				});
             });
         </script>
         <script>
@@ -128,76 +139,93 @@ and open the template in the editor.
 						<label value="" disabled selected style="color:Black">Filter By:<label>
 					</div>
 					<div class="input-field col s3">
-						<select>
-							<option value="" disabled selected style="color:Gray">Location</option>
-							<?php
-								#Query database for campus locations
-								$query = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';
-								
-								#Execute query
-								$results = mysqli_query($dbc, $query);
-								
-								#Output SQL errors, if any
-								check_results($results);
-								
-								#Populate drop-down list, if we got results from the query
-								if($results) {
-									while($row = mysqli_fetch_array($results , MYSQLI_ASSOC)) {
-										echo '<option value="' . $row['id'] . '">' . $row['short_name'] . '</option>';
+						<a class='dropdown-button btn' href='#' data-activates='location_drop'><i class="material-icons right">keyboard_arrow_down</i>Location</a>
+							<ul id='location_drop' class='dropdown-content'>
+								<?php
+									#Query database for campus locations
+									$query = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';
+									
+									#Execute query
+									$results = mysqli_query($dbc, $query);
+									
+									#Output SQL errors, if any
+									check_results($results);
+									
+									#Populate drop-down list, if we got results from the query
+									if($results) {
+										while($row = mysqli_fetch_array($results , MYSQLI_ASSOC)) {
+											echo '<li>' . '<a href="index.php?location=' . $row['id'] . '">' . $row['short_name'] . '</a>' . '</li>';
+										}
 									}
-								}
-							?>
-						</select>
+								?>
+							</ul>
 					</div>
 					<div class="input-field col s3">
-						<select>
-							<option value="" disabled selected style="color:Gray">Category</option>
-							<?php
-								#Query database for item categories
-								$query = 'SELECT * FROM categories ORDER BY name ASC';
-								
-								#Execute query
-								$results = mysqli_query($dbc, $query);
-								
-								#Output SQL errors, if any
-								check_results($results);
-								
-								#Populate drop-down list, if we got results from the query
-								if($results) {
-									while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
-										echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
+						<a class='dropdown-button btn' href='#' data-activates='category_drop'><i class="material-icons right">keyboard_arrow_down</i>Category</a>
+							<ul id='category_drop' class='dropdown-content'>
+								<?php
+									#Query database for item categories
+									$query = 'SELECT * FROM categories ORDER BY name ASC';
+									
+									#Execute query
+									$results = mysqli_query($dbc, $query);
+									
+									#Output SQL errors, if any
+									check_results($results);
+									
+									#Populate drop-down list, if we got results from the query
+									if($results) {
+										while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
+											echo '<li>' . '<a href="index.php?category=' . $row['id'] . '">' . $row['name'] . '</a>' . '</li>';
+										}
 									}
-								}
-							?>
-						</select>
+								?>
+							</ul>
 					</div>
 					<div class="input-field col s3">
-						<select>
-							<option value="" disabled selected>Status</option>
-							<?php
-								#Query database for item categories
-								$query = 'SELECT * FROM status ORDER BY id ASC';
-								
-								#Execute query
-								$results = mysqli_query($dbc, $query);
-								
-								#Output SQL errors, if any
-								check_results($results);
-								
-								#Populate drop-down list, if we got results from the query
-								if($results){
-									while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
-										echo '<option value="' . $row['id'] . '">' . $row['status'] . '</option>';
+						<a class='dropdown-button btn' href='#' data-activates='status_drop'><i class="material-icons right">keyboard_arrow_down</i>Status</a>
+							<ul id='status_drop' class='dropdown-content'>
+								<?php
+									#Query database for item status
+									$query = 'SELECT * FROM status WHERE status="Found" OR status="Lost"';
+									
+									#Execute query
+									$results = mysqli_query($dbc, $query);
+									
+									#Output SQL errors, if any
+									check_results($results);
+									
+									#Populate drop-down list, if we got results from the query
+									if($results) {
+										while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
+											echo '<li>' . '<a href="index.php?status=' . $row['id'] . '">' . $row['status'] . '</a>' . '</li>';
+										}
 									}
-								}
-							?>
-						</select>
+								?>
+							</ul>
+					</div>
+					<div class="input-field col s1">
+						<a class="waves-effect waves-light btn" href='index.php'>Show All</a>
 					</div>
 				</div>
                 <?php
-                    #Call a helper function (in includes/helpers.php) to list the database contents
-                    show_records($dbc);
-                ?>
+					if(isset($_GET['location']))
+						show_location_filter("all", $_GET['location'], "user");
+					
+					else if(isset($_GET['category']))
+						show_category_filter("all", $_GET['category'], "user");
+					
+					else if(isset($_GET['status']))
+						show_status_filter($_GET['status'], "user");
+						
+				?>
+				<div id="error" style="color:red"></div>
+				<?php
+					#Call a helper function (in includes/helpers.php) to list the database contents
+					if(!isset($_GET['location']) && !isset($_GET['category']) && !isset($_GET['status']))
+						show_records($dbc);
+					
+				?>
             </div>
         </main>
     </body>

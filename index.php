@@ -209,14 +209,17 @@ and open the template in the editor.
 					</div>
 				</div>
                 <?php
+					$random = mt_rand(0, 999999);
+					$user = sha1($random);
+				
 					if(isset($_GET['location']))
-						show_location_filter("all", $_GET['location'], "user");
+						show_location_filter("all", $_GET['location'], $user);
 					
 					else if(isset($_GET['category']))
-						show_category_filter("all", $_GET['category'], "user");
+						show_category_filter("all", $_GET['category'], $user);
 					
 					else if(isset($_GET['status']))
-						show_status_filter($_GET['status'], "user");
+						show_status_filter($_GET['status']);
 						
 				?>
 				<div id="error" style="color:red"></div>

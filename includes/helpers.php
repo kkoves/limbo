@@ -195,7 +195,7 @@ function show_category_filter($status, $id, $user){
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
-		if($user !== "user"){
+		if($user == "81512214dc59760e831386884a7466cc9bf2df65"){
 		echo '<th style="text-align:center">Update Item</th>';
 		echo '<th style="text-align:center">Delete Item</th>';
 		}
@@ -216,7 +216,7 @@ function show_category_filter($status, $id, $user){
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
-			if($user !== "user"){
+			if($user == "81512214dc59760e831386884a7466cc9bf2df65"){
 				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
 				echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
 			}
@@ -260,7 +260,7 @@ function show_location_filter($status, $id, $user){
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
-		if($user !== "user"){
+		if($user == "81512214dc59760e831386884a7466cc9bf2df65"){
 			echo '<th style="text-align:center">Update Item</th>';
 			echo '<th style="text-align:center">Delete Item</th>';
 		}
@@ -281,9 +281,9 @@ function show_location_filter($status, $id, $user){
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
-			if($user !== "user"){
-			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
-			echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			if($user == "81512214dc59760e831386884a7466cc9bf2df65"){
+				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
+				echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
 			}
 			echo '</tr>';
         }
@@ -298,7 +298,7 @@ function show_location_filter($status, $id, $user){
 }
 
 # Shows a table filtered by status
-function show_status_filter($status, $user){
+function show_status_filter($status){
 	global $dbc;
 	
 	if(!is_numeric($status))
@@ -331,10 +331,6 @@ function show_status_filter($status, $user){
         echo '<th>Date</th>';
         echo '<th>Category</th>';
         echo '<th>Status</th>';
-		if($user !== "user"){
-			echo '<th style="text-align:center">Update Item</th>';
-			echo '<th style="text-align:center">Delete Item</th>';
-		}
         echo '</tr>';
 
         # For each row result, generate a table row
@@ -352,10 +348,6 @@ function show_status_filter($status, $user){
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
-			if($user !== "user"){
-			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
-			echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
-			}
 			echo '</tr>';
         }
 

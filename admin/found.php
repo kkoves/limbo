@@ -226,11 +226,13 @@ and open the template in the editor.
 					</div>
 				</div>
 				<?php
+					$user = sha1("eW47FJ8nnK84j9ehaYcuuuq9hMjhGWRAjqYTmJaxmuzJPCbzvaxuYwA4DktEuYPZhZ4C8eab6Cvh78s7arfPrrYXccdMwSg5fUwGPQr6vAHNNzxwXbCkP9W4CsrJ7ZHW");
+				
 					if(isset($_GET['location']))
-						show_location_filter("Found",$_GET['location'], "admin");
+						show_location_filter("Found",$_GET['location'], $user);
 					
 					else if(isset($_GET['category']))
-						show_category_filter("Found",$_GET['category'], "admin");
+						show_category_filter("Found",$_GET['category'], $user);
 				?>
                 <?php
                     #Call a helper function (in includes/helpers.php) to list the database contents

@@ -2,6 +2,9 @@
 # Version 0.2
 # Authors: Krisztián Köves, Piradon (Tien) Liengtiraphan
 
+# Enable MySQL warnings in output
+\W
+
 # Create the database limbo_db
 CREATE DATABASE IF NOT EXISTS limbo_db;
 
@@ -24,26 +27,28 @@ INSERT INTO users (user, pass, reg_date, salt)
 # Create the table that will contain the L&F inventory
 CREATE TABLE IF NOT EXISTS stuff
 (
-    id           INT       AUTO_INCREMENT  PRIMARY KEY,
-    location_id  INT       NOT NULL,
-    title        TEXT      NOT NULL,
-    description  TEXT      NOT NULL,
-    category     INT       NOT NULL,
-    create_date  DATETIME  NOT NULL,
-    update_date  DATETIME  NOT NULL,
-	lost_date	 DATETIME,
-	found_date	 DATETIME,
-    room         TEXT,
-    email        TEXT      NOT NULL,
-    phone        TEXT      NOT NULL,
-    photo        TEXT,
-    owner        TEXT,
-    finder       TEXT,
-    status       SET("Found", "Lost", "Claimed")  NOT NULL
+    id            INT       AUTO_INCREMENT  PRIMARY KEY,
+    location_id   INT       NOT NULL,
+    title         TEXT      NOT NULL,
+    description   TEXT      NOT NULL,
+    category      INT       NOT NULL,
+    create_date   DATETIME  NOT NULL,
+    update_date   DATETIME  NOT NULL,
+	lost_date	  DATETIME,
+	found_date	  DATETIME,
+    claimed_date  DATETIME,
+    room          TEXT,
+    owner_email   TEXT,
+    owner_phone   TEXT,
+    finder_email  TEXT,
+    finder_phone  TEXT,
+    photo         TEXT,
+    owner         TEXT,
+    finder        TEXT,
+    status        SET("Found", "Lost", "Claimed")  NOT NULL
 );
 
 #Insert lost items demo data
-
 INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `room`, `owner`, `finder`, `status`)
     VALUES ('1', '6', 'Lost Stuff', 'Lost my stuff, someone help me find it', '5', "2015-11-17 12:15:29", "2015-11-17 12:15:29", NULL, 'John Doe', NULL, 'Lost'),
            ('2', '33', 'Backpack', 'Left my backpack on the bleachers in the stadium', '6', "2015-11-20 12:22:50", "2015-11-20 12:22:50", 'N/A', 'Marista Fox', NULL, 'Lost'),
@@ -51,7 +56,6 @@ INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `ca
 
 
 #Insert found items demo data
-
 INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `room`, `owner`, `finder`, `status`)
     VALUES ('4', '31', 'Samsung Galaxy S6', 'Found someone''s Samsung Galaxy S6 phone, unlock it to claim the phone', '1', "2015-11-23 12:40:00", "2015-11-23 12:40:00", 'Dining hall', '', 'John Smith', 'Found'),
            ('5', '22', 'Found high school class ring', 'Someone left their high school class ring in the 2nd floor lounge in Marian, name your high school and graduating class to claim it.', '4', "2015-11-18 12:58:18", "2015-11-18 12:58:18", '2nd floor lounge', '', 'Jeff Howenstine', 'Found'),

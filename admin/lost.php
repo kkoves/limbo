@@ -228,7 +228,7 @@ and open the template in the editor.
 					</div>
 				</div>
 				<?php
-					$user = sha1("eW47FJ8nnK84j9ehaYcuuuq9hMjhGWRAjqYTmJaxmuzJPCbzvaxuYwA4DktEuYPZhZ4C8eab6Cvh78s7arfPrrYXccdMwSg5fUwGPQr6vAHNNzxwXbCkP9W4CsrJ7ZHW");
+					$user = sha1("yGq5Ed4FD3E2EpBsU9TzyjQYWtRFCkJmQTZHRheUEnCB4QXUQHKLhxs2GXDUwXy6BX4dVsX3Gjfrf2gvsGzFu2KUvdjsK55qfvsc9RYWAFEhJBgfPKAx7YBntKh4vfDdMpsfb2y7umwafXNLWJWmZj4FqdZD8nwRVA7DyFzn5SGdn9X6j4wzgpSePsPUK6ApCMDhF3gCCR9wTX8fwcE9NSvTzyJz8dVvn4xKJeBN6WbaxBLNeJ2wsgXJSAVELDL2ksHxsFQ9MsRVnHwSzytufG5JVAkRt42WEJjm3DYEwHcHKpfZRrjYu6P23NpNYSCBg2mLzPqV4hwTFqKTqAeypvSMVKhP4jF333jK6QHWrLZngAxnGs78KSgegyvcSn8Z9KfEPQ82vC3QuvXbgdknacyULaTajnd3rcVyuqM7Mk4wjDMXXNYC7bj9AFs76EVNM9nYxveQtKuS2H9XjnmgrM6fDczBWHHKkwZGnGMWSWn2SJxsATV5ZHwcPU3BFd4a");
 				
 					if(isset($_GET['location']))
 						show_location_filter("Lost", $_GET['location'], $user);

@@ -122,6 +122,8 @@ and open the template in the editor.
 							<?php
 								require('includes/connect_db.php');
 								require('includes/helpers.php');
+								
+								session_destroy();
 						
 								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
 									if(isset($_GET['id']))

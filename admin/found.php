@@ -16,6 +16,17 @@ and open the template in the editor.
         <!-- Compiled and minified JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+		<?php
+			require('../includes/limbo_login_tools.php');
+				
+			session_start();
+				
+			# redirect to login page if there is no session open
+			if(!isset($_SESSION['login_user'])){
+				session_destroy();
+				load('login.php');
+			}
+		?>
         <script>
             $(document).ready(function(){
                 // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered

@@ -49,17 +49,16 @@ CREATE TABLE IF NOT EXISTS stuff
 );
 
 #Insert lost items demo data
-INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `room`, `owner`, `finder`, `status`)
-    VALUES ('1', '6', 'Lost Stuff', 'Lost my stuff, someone help me find it', '5', "2015-11-17 12:15:29", "2015-11-17 12:15:29", NULL, 'John Doe', NULL, 'Lost'),
-           ('2', '33', 'Backpack', 'Left my backpack on the bleachers in the stadium', '6', "2015-11-20 12:22:50", "2015-11-20 12:22:50", 'N/A', 'Marista Fox', NULL, 'Lost'),
-           ('3', '31', 'Lost Galaxy S6 Phone', 'Lost my new Galaxy S6 phone in the dining hall, please let me know if you find it!', '1', "2015-11-23 12:28:59", "2015-11-23 12:28:59", 'Dining hall', 'Jane Doe', NULL, 'Lost');
-
+INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `lost_date`, `found_date`, `claimed_date`, `room`, `owner_email`, `owner_phone`, `finder_email`, `finder_phone`, `photo`, `owner`, `finder`, `status`)
+    VALUES ('1', '6', 'Lost Stuff', 'Lost my stuff, someone help me find it', '5', '2015-11-17 12:15:29.000000', '2015-11-17 12:15:29.000000', '2015-11-17 00:00:00', NULL, NULL, NULL, 'JohnDoe@marist.edu', '5185550132', NULL, NULL, NULL, 'John Doe', NULL, 'Lost'),
+           ('2', '33', 'Backpack', 'Left my backpack on the bleachers in the stadium', '6', '2015-11-20 12:22:50.000000', '2015-11-20 12:22:50.000000', '2015-11-20 00:00:00', NULL, NULL, 'N/A', 'MaristaFox@marist.edu', '8605550178', NULL, NULL, NULL, 'Marista Fox', NULL, 'Lost'),
+           ('3', '31', 'Lost Galaxy S6 Phone', 'Lost my new Galaxy S6 phone in the dining hall, please let me know if you find it!', '1', '2015-11-23 12:28:59.000000', '2015-11-23 12:28:59.000000', '2015-11-23 00:00:00', NULL, NULL, 'Dining hall', 'JaneDoe@marist.edu', '6175550135', NULL, NULL, NULL, 'Jane Doe', NULL, 'Lost');
 
 #Insert found items demo data
-INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `room`, `owner`, `finder`, `status`)
-    VALUES ('4', '31', 'Samsung Galaxy S6', 'Found someone''s Samsung Galaxy S6 phone, unlock it to claim the phone', '1', "2015-11-23 12:40:00", "2015-11-23 12:40:00", 'Dining hall', '', 'John Smith', 'Found'),
-           ('5', '22', 'Found high school class ring', 'Someone left their high school class ring in the 2nd floor lounge in Marian, name your high school and graduating class to claim it.', '4', "2015-11-18 12:58:18", "2015-11-18 12:58:18", '2nd floor lounge', '', 'Jeff Howenstine', 'Found'),
-           ('6', '2', 'Bose headphones', 'Found Bose headphones in the library, name the headphones'' model to claim it.', '3', "2015-11-21 13:04:45", "2015-11-21 13:04:45", '3rd floor Reading Room', '', 'Eric Berns', 'Found');
+INSERT INTO `limbo_db`.`stuff` (`id`, `location_id`, `title`, `description`, `category`, `create_date`, `update_date`, `lost_date`, `found_date`, `claimed_date`, `room`, `owner_email`, `owner_phone`, `finder_email`, `finder_phone`, `photo`, `owner`, `finder`, `status`)
+    VALUES ('4', '31', 'Samsung Galaxy S6', 'Found someone''s Samsung Galaxy S6 phone, unlock it to claim the phone', '1', '2015-11-23 12:40:00.000000', '2015-11-23 12:40:00.000000', NULL, '2015-11-23 00:00:00', NULL, 'Dining hall', NULL, NULL, 'JohnSmith@marist.edu', '6095550127', NULL, '', 'John Smith', 'Found'),
+           ('5', '22', 'Found high school class ring', 'Someone left their high school class ring in the 2nd floor lounge in Marian, name your high school and graduating class to claim it.', '4', '2015-11-18 12:58:18.000000', '2015-11-18 12:58:18.000000', NULL, '2015-11-18 00:00:00', NULL, '2nd floor lounge', NULL, NULL, 'JeffHowenstine@marist.edu', '3855550136', NULL, '', 'Jeff Howenstine', 'Found'),
+           ('6', '2', 'Bose headphones', 'Found Bose headphones in the library, name the headphones'' model to claim it.', '3', '2015-11-21 13:04:45.000000', '2015-11-21 13:04:45.000000', NULL, '2015-11-21 00:00:00', NULL, '3rd floor Reading Room', NULL, NULL, 'EricBerns@marist.edu', '8505550152', NULL, '', 'Eric Berns', 'Found');
            
 # Create a table for all the buildings on campus
 CREATE TABLE IF NOT EXISTS locations

@@ -155,8 +155,8 @@ function show_records_found($dbc) {
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
 			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="found.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
-			echo '<td style="text-align:center;">' . '<a class="material-icons" style="color:#9e9e9e" href="found.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
-            echo '</tr>';
+			echo '<td style="text-align:center">' . '<form class="col s12" action="found.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			echo '</tr>';
         }
 
         # End the table
@@ -211,8 +211,8 @@ function show_records_lost($dbc) {
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
 			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
-			echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
-            echo '</tr>';
+			echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			echo '</tr>';
         }
 
         # End the table
@@ -399,7 +399,7 @@ function show_users($id){
 				echo '<td>' . $row['pass'] . '</td>';
 				echo '<td>' . $row['reg_date'] . '</td>';
 				if($row['user'] !== 'admin')
-					echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="index.php?delete=' .$row['id'] . '">delete</a>' . '</td>';
+					echo '<td style="text-align:center">' . '<form class="col s12" action="index.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
 				
 			echo '</tr>';
 		}
@@ -413,7 +413,7 @@ function show_users($id){
 function delete_item($id){
 	global $dbc;
 	
-	$query = 'DELETE FROM stuff WHERE id=' .$id;
+	$query = 'DELETE FROM stuff WHERE stuff.id=' .$id;
 	
 	$results = mysqli_query($dbc, $query);
     check_results($results);
@@ -443,7 +443,7 @@ function add_admin(){
 		'salt' => $random_string,
 	];
 	
-	$user = trim($_POST['user']);
+	$user = strtolower(trim($_POST['user']));
 	$pass = password_hash($_POST['pass'], PASSWORD_BCRYPT, $options);
 	$pass_confirm = password_hash($_POST['pass_confirm'], PASSWORD_BCRYPT, $options);
 	
@@ -518,7 +518,12 @@ function update_item_form($id){
 
 		#echo '<script>$(document).ready(function () {var date = new Date();var year = date.getFullYear();$("select").material_select();$(".datepicker").pickadate({selectMonths: true,selectYears: 2,max: year,format: "yyyy-mm-dd"});$("#description").val(' . $description . ');$("#description").trigger("autoresize");});</script>';
 		echo '<div class="row">';
-        echo '<form enctype="multipart/form-data" class="col s12" action="../admin/lost.php" method="POST">';
+        if($status === 'Lost')
+            echo '<form enctype="multipart/form-data" class="col s12" action="../admin/lost.php" method="POST">';
+        else if($status === 'Found')
+            echo '<form enctype="multipart/form-data" class="col s12" action="../admin/found.php" method="POST">';
+        else if($status === 'Claimed')
+            echo '<form enctype="multipart/form-data" class="col s12" action="../admin/claimed.php" method="POST">';
         echo '<div class="row">';
         echo '<div class="input-field col s12">';
         echo '<input required placeholder="Submission Title" name="title" type="text" class="validate" value="' . $title . '">';
@@ -700,7 +705,7 @@ function insert_item($status, $date /*$title, $full_name, $email, $phone, $locat
 	
 	#Assign variabled to insert into database from user input in $_POST
 	$loc = $_POST['location'];
-	$title = $_POST['title'];
+	$title = trim($_POST['title']);
 	$descr = $_POST['description'];
 	$category = $_POST['category'];
 	$create_date = $date;
@@ -712,9 +717,9 @@ function insert_item($status, $date /*$title, $full_name, $email, $phone, $locat
 	if($status == 'Found') $found_date = $_POST['date'];
 	else $found_date = '';
 	
-	$room = $_POST['room'];
-	$email = $_POST['email'];
-	$phone = $_POST['phone'];
+	$room = trim($_POST['room']);
+	$email = strtolower(trim($_POST['email']));
+	$phone = trim($_POST['phone']);
 	$photo = $_POST['filepath'];
 	
 	if($status == 'Lost') $owner = $_POST['full_name'];

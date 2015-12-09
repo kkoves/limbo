@@ -88,6 +88,7 @@ and open the template in the editor.
 			.container{
 				padding-left: 5%;
 			}
+			
         </style>
     <body onload="startTime()">
         <header>
@@ -125,9 +126,8 @@ and open the template in the editor.
 					require('../includes/connect_db.php');
 					require('../includes/helpers.php');
 					
-					if(isset($_GET['delete'])){
-						delete_item($_GET['delete']);
-					}
+					if(isset($_POST['deleteID'])) 
+						delete_item($_POST['deleteID']);
 				?>
 			    <!-- Modal dialog for "Lost & Found Item Detail" -->
 				<div id="modal1" class="modal modal-fixed-footer">
@@ -150,12 +150,10 @@ and open the template in the editor.
 						<h4>Update Item Information</h4>
 						<p>
 							<?php
-								if(isset($_GET['updateID'])) {
-									$_POST['updateID'] = $_GET['updateID'];
+								if(isset($_GET['updateID'])) 
 									update_item_form($_GET['updateID']);
-								}
 								
-								if($_SERVER['REQUEST_METHOD'] == 'POST') {
+								if(isset($_POST['updateID'])) {
 									if(valid_form())
 										update_record();
 								}
@@ -216,7 +214,6 @@ and open the template in the editor.
 					</div>
 				</div>
 				<div id="error" style="color:red"></div>
-				<div id="updateID" style="color:red"></div>
 				<?php
 					
 					#Call a helper function (in includes/helpers.php) to list the database contents

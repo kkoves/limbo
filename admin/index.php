@@ -57,12 +57,14 @@ and open the template in the editor.
 			require('../includes/connect_db.php');
 			require('../includes/helpers.php');
 			
-			if(isset($_GET['delete'])){
+			if(isset($_POST['deleteID'])) 
+				delete_user($_POST['deleteID']);
+			/*if(isset($_GET['delete'])){
 				delete_user($_GET['delete']);
-			}
+			}*/
 		?>
 		<?php
-            if($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if(isset($_POST['user'])) {
 				add_admin(); // Adds a new admin along with the current timestamp
 				$_POST = array();
 			}

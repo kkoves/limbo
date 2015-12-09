@@ -125,9 +125,8 @@ and open the template in the editor.
 					require('../includes/connect_db.php');
 					require('../includes/helpers.php');
 					
-					if(isset($_GET['delete'])){
-						delete_item($_GET['delete']);
-					}
+					if(isset($_POST['deleteID'])) 
+						delete_item($_POST['deleteID']);
 				?>
 			    <!-- Modal dialog for "Lost & Found Item Detail" -->
 				<div id="modal1" class="modal modal-fixed-footer">
@@ -135,10 +134,8 @@ and open the template in the editor.
 						<h4>Lost/Found Item Detail</h4>
 						<p>
 							<?php
-								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
-									if(isset($_GET['id']))
-										show_record($_GET['id']);
-								}
+								if(isset($_GET['id']))
+									show_record($_GET['id']);
 							?>
 						</p>
 					</div>
@@ -155,6 +152,10 @@ and open the template in the editor.
 								if(isset($_GET['updateID']))
 									update_item_form($_GET['updateID']);
 								
+								if(isset($_POST['updateID'])) {
+									if(valid_form())
+										update_record();
+								}
 							?>
 						</p>
 					</div>

@@ -22,12 +22,10 @@ and open the template in the editor.
                 $('.modal-trigger').leanModal();
 				$('select').material_select();
                 
-                var str = window.location.href;
+                var loc = window.location.href;
                 
-                if(str.indexOf("?id=") > -1)
+                if(loc.indexOf("?id=") > -1)
                     $('#modal1').openModal();
-                /*if(window.location == "http://localhost/Assignments/Assignment%204/User/index.php")
-                    $('#modal1').closeModal();*/
                 
                 $(".button-collapse show-on-large").sideNav();
             });
@@ -56,14 +54,17 @@ and open the template in the editor.
 		<?php
 			require('../includes/connect_db.php');
 			require('../includes/helpers.php');
-			
+			require('../includes/limbo_login_tools.php');
+            
+            session_start();
+            
+            # redirect to login page if there is no session open
+            if(!isset($_SESSION['login_user']))
+                load('login.php');
+            
 			if(isset($_POST['deleteID'])) 
 				delete_user($_POST['deleteID']);
-			/*if(isset($_GET['delete'])){
-				delete_user($_GET['delete']);
-			}*/
-		?>
-		<?php
+            
             if(isset($_POST['user'])) {
 				add_admin(); // Adds a new admin along with the current timestamp
 				$_POST = array();

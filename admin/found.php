@@ -22,15 +22,13 @@ and open the template in the editor.
                 $('.modal-trigger').leanModal();
 				$('select').material_select();
                 
-                var str = window.location.href;
+                var loc = window.location.href;
                 
-                if(str.indexOf("?id=") > -1)
+                if(loc.indexOf("?id=") > -1)
                     $('#modal1').openModal();
 				
-				if(str.indexOf("?updateID=") > -1)
+				if(loc.indexOf("?updateID=") > -1)
                     $('#modal2').openModal();
-                /*if(window.location == "http://localhost/Assignments/Assignment%204/User/index.php")
-                    $('#modal1').closeModal();*/
                 
                 $(".button-collapse show-on-large").sideNav();
 				

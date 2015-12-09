@@ -54,8 +54,12 @@ and open the template in the editor.
 			require( '../includes/connect_db.php' ) ;
 
 			# Connect to MySQL server and the database
-			require( '../includes/limbo_login_tools.php' ) ;
+			require( '../includes/limbo_login_tools.php' );
+            
+            require('../includes/helpers.php');
 
+            session_start();
+            
 			if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
 				global $dbc;
 				
@@ -82,8 +86,10 @@ and open the template in the editor.
 				if($pid == -1){
 					echo '<script>$(document).ready(function () {$("#error").html("Login failed, please try again.");});</script>';
 				}
-				else
+				else {
+                    $_SESSION['login_user'] = $user;
 					load('index.php', $pid);
+                }
 			}
 		?>
 

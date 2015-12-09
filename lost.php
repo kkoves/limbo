@@ -114,10 +114,12 @@ and open the template in the editor.
         </header>
         <main>
             <div class="container">
+                
                 <div class="row">
                     <div class="col s12">
                         <div id="lostItemForm" class="row">
                             <form enctype="multipart/form-data" class="col s12" action="lost.php" method="POST">
+                                <div id="error" style="color:red"></div>
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input required placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
@@ -137,19 +139,19 @@ and open the template in the editor.
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">email</i>
-                                        <input required name="email" type="email" class="validate" value="<?php if(isset($_POST['email'])) echo $_POST['email']; ?>">
-                                        <label for="email">Email*</label>
+                                        <input required name="owner_email" type="email" class="validate" value="<?php if(isset($_POST['owner_email'])) echo $_POST['owner_email']; ?>">
+                                        <label for="owner_email">Email*</label>
                                     </div>
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
-                                        <input name="phone" type="number" class="validate" value="<?php if(isset($_POST['phone'])) echo $_POST['phone']; ?>">
-                                        <label for="phone">Phone #</label>
+                                        <input name="owner_phone" type="number" class="validate" value="<?php if(isset($_POST['owner_phone'])) echo $_POST['owner_phone']; ?>">
+                                        <label for="owner_phone">Phone #</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <select required name="location">
-                                            <option value="" disabled selected>Building</option>
+                                            <option value="" disabled <?php if(!isset($_POST['location'])) echo 'selected'; ?> >Building</option>
                                             <?php
                                                 #Query database for campus locations
                                                 $query = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';
@@ -163,7 +165,10 @@ and open the template in the editor.
                                                 #Populate drop-down list, if we got results from the query
                                                 if($results) {
                                                     while($row = mysqli_fetch_array($results , MYSQLI_ASSOC)) {
-                                                        echo '<option value="' . $row['id'] . '">' . $row['short_name'] . '</option>';
+                                                        if(isset($_POST['location']) && $row['id'] === $_POST['location'])
+                                                            echo '<option value="' . $row['id'] . '" selected>' . $row['short_name'] . '</option>';
+                                                        else
+                                                            echo '<option value="' . $row['id'] . '">' . $row['short_name'] . '</option>';
                                                     }
                                                 }
                                             ?>
@@ -182,7 +187,7 @@ and open the template in the editor.
                                     </div>
                                     <div class="input-field col s3">
                                         <select required name="category">
-                                            <option value="" disabled selected>Category</option>
+                                            <option value="" disabled <?php if(!isset($_POST['location'])) echo 'selected'; ?> >Category</option>
                                             <?php
                                                 #Query database for item categories
                                                 $query = 'SELECT * FROM categories ORDER BY name ASC';
@@ -196,7 +201,10 @@ and open the template in the editor.
                                                 #Populate drop-down list, if we got results from the query
                                                 if($results) {
                                                     while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
-                                                        echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
+                                                        if(isset($_POST['category']) && $row['id'] === $_POST['category'])
+                                                            echo '<option value="' . $row['id'] . '" selected>' . $row['name'] . '</option>';
+                                                        else
+                                                            echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
                                                     }
                                                 }
                                             ?>
@@ -206,28 +214,27 @@ and open the template in the editor.
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s6">
-                                        <div class="row">
-                                            <div class="input-field col s12">
-                                                <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
-                                                <label for="textarea1">Description*</label>
-                                            </div>
+                                        <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
+                                        <label for="textarea1">Description*</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="file-field input-field col s6">
+                                        <div class="btn red darken-4">
+                                            <span>Photo</span>
+                                            <input type="file" name="photo">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text" name="filepath">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="file-field input-field col s6">
-                                    <div class="btn red darken-4">
-                                        <span>Photo</span>
-                                        <input type="file" name="photo">
+                                <div class="row">
+                                    <div align="right" class="input-field col s6">
+                                        <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+                                            <i class="material-icons right">send</i>
+                                        </button>
                                     </div>
-                                    <div class="file-path-wrapper">
-                                        <input class="file-path validate" type="text" name="filepath">
-                                    </div>
-                                </div>
-                                <br><br><br>
-                                <div align="right" class="row">
-                                    <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
-                                        <i class="material-icons right">send</i>
-                                    </button>
                                 </div>
                             </form>
                         </div>

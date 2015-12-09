@@ -112,7 +112,8 @@ and open the template in the editor.
                 <div class="row">
                     <div class="col s12">
                         <div id="foundItemForm" class="row">
-                            <form class="col s12" action="found.php" method="POST">
+                            <form enctype="multipart/form-data" class="col s12" action="found.php" method="POST">
+                                <div id="error" style="color:red"></div>
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input required placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
@@ -132,13 +133,13 @@ and open the template in the editor.
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">email</i>
-                                        <input required name="email" type="email" class="validate" value="<?php if(isset($_POST['email'])) echo $_POST['email']; ?>">
-                                        <label for="email">Email*</label>
+                                        <input required name="finder_email" type="email" class="validate" value="<?php if(isset($_POST['finder_email'])) echo $_POST['finder_email']; ?>">
+                                        <label for="finder_email">Email*</label>
                                     </div>
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
-                                        <input name="phone" type="number" class="validate" value="<?php if(isset($_POST['phone'])) echo $_POST['phone']; ?>">
-                                        <label for="phone">Phone #</label>
+                                        <input name="finder_phone" type="number" class="validate" value="<?php if(isset($_POST['finder_phone'])) echo $_POST['finder_phone']; ?>">
+                                        <label for="finder_phone">Phone #</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -201,28 +202,27 @@ and open the template in the editor.
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s6">
-                                        <div class="row">
-                                            <div class="input-field col s12">
-                                                <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
-                                                <label for="textarea1">Description*</label>
-                                            </div>
+                                        <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
+                                        <label for="textarea1">Description*</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="file-field input-field col s6">
+                                        <div class="btn red darken-4">
+                                            <span>Photo</span>
+                                            <input type="file" name="photo">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text" name="filepath">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="file-field input-field col s6">
-                                    <div class="btn red darken-4">
-                                        <span>Photo</span>
-                                        <input type="file" name="photo">
+                                <div class="row">
+                                    <div align="right" class="input-field col s6">
+                                        <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+                                            <i class="material-icons right">send</i>
+                                        </button>
                                     </div>
-                                    <div class="file-path-wrapper">
-                                        <input class="file-path validate" type="text" name="filepath">
-                                    </div>
-                                </div>
-                                <br><br><br>
-                                <div align="right" class="row">
-                                    <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
-                                        <i class="material-icons right">send</i>
-                                    </button>
                                 </div>
                             </form>
                         </div>

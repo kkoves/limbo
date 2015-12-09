@@ -1,5 +1,5 @@
 <?php
-$debug = false;
+$debug = true;
 
 # Get locations on Marist campus, make array
 /*function get_locations() {
@@ -294,16 +294,16 @@ function show_record($id) {
                 echo '<td>' . $row['status'] . '</td>';
             echo '</tr>';
 			
-			//If lost date is not "empty" (all 0's), display it
-			if($row['lost_date'] != '0000-00-00 00:00:00') {
+			//If lost date is not empty or all 0's, display it
+			if(!empty($row['lost_date']) && $row['lost_date'] != '0000-00-00 00:00:00') {
 				echo '<tr>';
                     echo '<td><b>Lost Date:</b></td>';
                     echo '<td>' . format_date($row['lost_date'], "m/d/Y") . '</td>';
                 echo '</tr>';
 			}
 			
-			//If found date is not "empty" (all 0's), display it
-			if($row['found_date'] != '0000-00-00 00:00:00') {
+			//If found date is not empty or all 0's, display it
+			if(!empty($row['found_date']) && $row['found_date'] !== '0000-00-00 00:00:00') {
 				echo '<tr>';
                     echo '<td><b>Found Date:</b></td>';
                     echo '<td>' . format_date($row['found_date'], "m/d/Y") . '</td>';
@@ -344,15 +344,33 @@ function show_record($id) {
                 echo '</tr>';
             }
             
-            echo '<tr>';
-                echo '<td><b>Email:</b></td>';
-                echo '<td>' . $row['email'] . '</td>';
-            echo '</tr>';
+            if(!empty($row['owner_email'])) {
+                echo '<tr>';
+                    echo '<td><b>Owner\'s Email:</b></td>';
+                    echo '<td>' . $row['owner_email'] . '</td>';
+                echo '</tr>';
+            }
             
-            echo '<tr>';
-                echo '<td><b>Phone Number:</b></td>';
-                echo '<td>' . $row['phone'] . '</td>';
-            echo '</tr>';
+            if(!empty($row['owner_phone'])) {
+                echo '<tr>';
+                    echo '<td><b>Owner\'s Phone Number:</b></td>';
+                    echo '<td>' . $row['owner_phone'] . '</td>';
+                echo '</tr>';
+            }
+            
+            if(!empty($row['finder_email'])) {
+                echo '<tr>';
+                    echo '<td><b>Finder\'s Email:</b></td>';
+                    echo '<td>' . $row['finder_email'] . '</td>';
+                echo '</tr>';
+            }
+            
+            if(!empty($row['finder_phone'])) {
+                echo '<tr>';
+                    echo '<td><b>Finder\'s Phone Number:</b></td>';
+                    echo '<td>' . $row['finder_phone'] . '</td>';
+                echo '</tr>';
+            }
             
             if(!empty($row['photo'])) {
                 echo '<tr>';
@@ -478,7 +496,7 @@ function add_admin(){
 function update_record(){
 	global $dbc, $debug;
     
-	$query = 'UPDATE stuff SET ' . ' location_id=' . $_POST['location'] . ', title="' . $_POST['title'] . '", description="' . $_POST['description'] . '", category=' . $_POST['category'] . ', update_date=NOW()' . ', lost_date="' . $_POST['lost_date'] . '", found_date="' . $_POST['found_date'] . '", room="' . $_POST['room'] . '", email="' . $_POST['email'] . '", phone="' . $_POST['phone'] . '", photo="' . $_POST['photo'] . '", owner="' . $_POST['owner_full_name'] . '", finder="' . $_POST['finder_full_name'] . '", status="' . $_POST['status'] . '" WHERE id=' . $_POST['updateID'];
+	$query = 'UPDATE stuff SET ' . ' location_id=' . $_POST['location'] . ', title="' . $_POST['title'] . '", description="' . $_POST['description'] . '", category=' . $_POST['category'] . ', update_date=NOW()' . ', lost_date="' . $_POST['lost_date'] . '", found_date="' . $_POST['found_date'] . '", claimed_date="' . $_POST['claimed_date'] . '", room="' . $_POST['room'] . '", owner_email="' . $_POST['owner_email'] . '", owner_phone="' . $_POST['owner_phone'] . '", finder_email="' . $_POST['finder_email'] . '", finder_phone="' . $_POST['finder_phone'] . '", photo="' . $_POST['photo'] . '", owner="' . $_POST['owner_full_name'] . '", finder="' . $_POST['finder_full_name'] . '", status="' . $_POST['status'] . '" WHERE id=' . $_POST['updateID'];
 	
 	$results = mysqli_query($dbc, $query);
 	
@@ -516,10 +534,17 @@ function update_item_form($id){
             $found_date = format_date($row['found_date'], "Y-m-d");
 		else
             $found_date = '0000-00-00';
+        
+        if(!empty($row['claimed_date']) && $row['claimed_date'] !== '0000-00-00 00:00:00')
+            $claimed_date = format_date($row['claimed_date'], "Y-m-d");
+		else
+            $claimed_date = '0000-00-00';
 		
         $room = $row['room'];
-		$email = $row['email'];
-		$phone = $row['phone'];
+		$owner_email = $row['owner_email'];
+		$owner_phone = $row['owner_phone'];
+		$finder_email = $row['finder_email'];
+		$finder_phone = $row['finder_phone'];
 		$photo = $row['photo'];
 		$owner = $row['owner'];
 		$finder = $row['finder'];
@@ -539,38 +564,61 @@ function update_item_form($id){
         echo '<label for="title">Title*</label>';
         echo '</div>';
         echo '</div>';
+        
+        # Owner/finder names row
         echo '<div class="row">';
-        echo '<div class="input-field col s12">';
-		if(!empty($row['finder']))
-			echo '<input required placeholder="Finder\'s Name" name="finder_full_name" type="text" class="validate" value="' . $finder . '">';
-		if(!empty($row['owner']))
-			echo '<input required placeholder="Owner\'s Name" name="owner_full_name" type="text" class="validate" value="' . $owner . '">';
-        echo '<label for="full_name">Oweners\'s Name*</label>';
+            echo '<div class="input-field col s6">';
+                echo '<input name="owner_full_name" type="text" class="validate" value="' . $owner . '">';
+                echo '<label for="owner_full_name">Owner\'s Name</label>';
+            echo '</div>';
+            echo '<div class="input-field col s6">';
+                echo '<input name="finder_full_name" type="text" class="validate" value="' . $finder . '">';
+                echo '<label for="finder_full_name">Finder\'s Name</label>';
+            echo '</div>';
         echo '</div>';
-        echo '</div>';
+        
+        # Owner/finder emails row
         echo '<div class="row">';
-        echo '<div class="input-field col s6">';
-        echo '<i class="material-icons prefix">email</i>';
-        echo '<input required name="email" type="email" class="validate" value="' . $email . '">';
-        echo '<label for="email">Email*</label>';
+            echo '<div class="input-field col s6">';
+                echo '<i class="material-icons prefix">email</i>';
+                echo '<input name="owner_email" type="email" class="validate" value="' . $owner_email . '">';
+                echo '<label for="owner_email">Owner\'s Email</label>';
+            echo '</div>';
+            echo '<div class="input-field col s6">';
+                echo '<i class="material-icons prefix">email</i>';
+                echo '<input name="finder_email" type="email" class="validate" value="' . $finder_email . '">';
+                echo '<label for="finder_email">Finder\'s Email</label>';
+            echo '</div>';
         echo '</div>';
-        echo '<div class="input-field col s6">';
-        echo '<i class="material-icons prefix">phone</i>';
-        echo '<input name="phone" type="number" class="validate" value="' . $phone . '">';
-        echo '<label for="phone">Phone #</label>';
+        
+        # Owner/finder phone numbers row
+        echo '<div class="row">';
+            echo '<div class="input-field col s6">';
+                echo '<i class="material-icons prefix">phone</i>';
+                echo '<input name="owner_phone" type="number" class="validate" value="' . $owner_phone . '">';
+                echo '<label for="owner_phone">Owner\'s Phone #</label>';
+            echo '</div>';
+            echo '<div class="input-field col s6">';
+                echo '<i class="material-icons prefix">phone</i>';
+                echo '<input name="finder_phone" type="number" class="validate" value="' . $finder_phone . '">';
+                echo '<label for="finder_phone">Finder\'s Phone #</label>';
+            echo '</div>';
         echo '</div>';
-        echo '</div>';
+        
         echo '<div class="row">';
         echo '<div id="building" class="input-field col s6">';
         echo '<select required name="location">';
         echo '<option value="" disabled>Building</option>';
 		
         #Query database for campus locations
-        $query2 = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';                                       
+        $query2 = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';
+        
         #Execute query
         $results2 = mysqli_query($dbc, $query2);
+        
         #Output SQL errors, if any
-        check_results($results2);                                   
+        check_results($results2);
+        
         #Populate drop-down list, if we got results from the query
         if($results2) {
 			while($row2 = mysqli_fetch_array($results2 , MYSQLI_ASSOC)) {
@@ -590,7 +638,26 @@ function update_item_form($id){
 		echo '</div>';
         echo '</div>';
         
-        #echo date selection fields, ordered by item's status (e.g., Lost date selection is shown first if item is in Lost status)
+        # Lost/found/claimed dates row
+        echo '<div class="row">';
+            echo '<div class="input-field col s4">';
+                echo '<i class="material-icons prefix">date_range</i>';
+                echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="lost_date" value="' . $lost_date . '">';
+                echo '<label for="lost_date">Date Lost*</label>';
+            echo '</div>';
+            echo '<div class="input-field col s4">';
+                echo '<i class="material-icons prefix">date_range</i>';
+                echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="found_date" value="' . $found_date . '">';
+                echo '<label for="found_date">Date Found*</label>';
+            echo '</div>';
+            echo '<div class="input-field col s4">';
+                echo '<i class="material-icons prefix">date_range</i>';
+                echo '<input required placeholder="Year-Month-Day" type="date" class="datepicker" name="claimed_date" value="' . $claimed_date . '">';
+                echo '<label for="claimed_date">Date Claimed*</label>';
+            echo '</div>';
+        echo '</div>';
+        
+        /*#echo date selection fields, ordered by item's status (e.g., Lost date selection is shown first if item is in Lost status)
         echo '<div class="row">'; # begin date row
             if($status === "Lost") {
                 echo '<div class="input-field col s6">'; # begin date col 1
@@ -614,8 +681,9 @@ function update_item_form($id){
                 echo '<label for="lost_date">Date Lost*</label>';
             }
         echo '</div>'; # end date col 2
+        echo '</div>'; # end date row*/
         
-        echo '</div>'; # end date row
+        # Status/category row
 		echo '<div class="row">';
 		echo '<div id="status" class="input-field col s6">';
         echo '<select required name="status">';
@@ -707,10 +775,8 @@ function update_item_form($id){
 }
 
 # Inserts a lost/found item into limbo_db from $_POST
-function insert_item($status, $date /*$title, $full_name, $email, $phone, $location, $room, $lost_date, $found_date, $report_date, $category, $description, $filepath*/) {
+function insert_item($status, $date) {
     global $dbc;
-	
-	#$var = $_POST[''];
 	
 	#Assign variabled to insert into database from user input in $_POST
 	$loc = $_POST['location'];
@@ -727,8 +793,27 @@ function insert_item($status, $date /*$title, $full_name, $email, $phone, $locat
 	else $found_date = '';
 	
 	$room = trim($_POST['room']);
-	$email = strtolower(trim($_POST['email']));
-	$phone = trim($_POST['phone']);
+    
+    if(!empty($_POST['owner_email']))
+	$owner_email = strtolower(trim($_POST['owner_email']));
+    else
+        $owner_email = '';
+    
+    if(!empty($_POST['owner_phone']))
+	$owner_phone = trim($_POST['owner_phone']);
+    else
+        $owner_phone = '';
+    
+    if(!empty($_POST['finder_email']))
+    $finder_email = strtolower(trim($_POST['finder_email']));
+    else
+        $finder_email = '';
+    
+    if(!empty($_POST['finder_phone']))
+        $finder_phone = trim($_POST['finder_phone']);
+    else
+        $finder_phone = '';
+    
 	$photo = $_POST['filepath'];
 	
 	if($status == 'Lost') $owner = $_POST['full_name'];
@@ -736,13 +821,10 @@ function insert_item($status, $date /*$title, $full_name, $email, $phone, $locat
 	
 	if($status == 'Found') $finder = $_POST['full_name'];
 	else $finder = '';
-	
-	$stat = $status;
     
     #TODO: add database insert functionality here
     
-    $query = "INSERT INTO stuff(location_id, title, description, category, create_date, update_date, lost_date, found_date, room, email, phone, photo, owner, finder, status) VALUES($loc, \"$title\", \"$descr\", $category, \"$create_date\", \"$update_date\", \"$lost_date\", \"$found_date\", \"$room\", \"$email\", \"$phone\", \"$photo\", \"$owner\", \"$finder\", \"$stat\")";
-	#'INSERT INTO stuff(location_id, value2, value3) VALUES (' . $value1 . ' , "' . $value2 . '" , "' . $value3 . '" )';
+    $query = "INSERT INTO stuff (location_id, title, description, category, create_date, update_date, lost_date, found_date, room, owner_email, owner_phone, finder_email, finder_phone, photo, owner, finder, status) VALUES($loc, \"$title\", \"$descr\", $category, \"$create_date\", \"$update_date\", \"$lost_date\", \"$found_date\", \"$room\", \"$owner_email\", \"$owner_phone\", \"$finder_email\", \"$finder_phone\", \"$photo\", \"$owner\", \"$finder\", \"$status\")";
     
 	#Show query if debugging is enabled (at the top of this file)
     show_query($query);
@@ -835,6 +917,9 @@ function valid_form() {
     
 	$errors = false; #TODO: make errors array
 	
+    if(empty($_POST['title']))
+        $errors = true;
+    
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     
@@ -853,10 +938,15 @@ function valid_form() {
     else
         $lost_date = $_POST['lost_date'];
     
-    $phone = $_POST['phone'];
+    if(!empty($_POST['owner_phone'])) {
+        $owner_phone = $_POST['owner_phone'];
+        #TODO: validate phone number
+        #Basic regex: /\d{10}/
+    }
     
-    #TODO: validate phone number
-	#Basic regex: /\d{10}/
+    if(!empty($_POST['finder_phone'])) {
+        $finder_phone = $_POST['finder_phone'];
+    }
     
     $description = $_POST['description'];
     
@@ -866,10 +956,9 @@ function valid_form() {
     $_POST['description'] = $description;
 	
 	#If there are errors in form fields
-	/*
-	if(!empty(errors)) {
+	if(!empty($errors)) {
 		#TODO: Print error messages
-		echo '<p>Invalid form submission, please try again. Most form values were saved.</p>';
+        echo '<script>$(document).ready(function () {$("#error").html("Invalid form submission, please try again. Most form values were saved.");});</script>';
 		return false;
 	}
 	#Else, if there are no errors in form fields (to the best of our knowledge)
@@ -877,8 +966,8 @@ function valid_form() {
 		#TODO: Print success message
 		return true;
 	}
-	*/
-	return true;
+    
+	//return true;
 }
 
 ?>

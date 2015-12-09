@@ -491,7 +491,10 @@ function update_record(){
 function update_item_form($id){
 	global $dbc;
 	
-	$query = 'SELECT * FROM stuff WHERE id=' . $id;
+	if(!is_numeric($id))
+		return false;
+	else
+		$query = 'SELECT * FROM stuff WHERE id=' . $id;
     
     $results = mysqli_query($dbc, $query);
     check_results($results);

@@ -413,7 +413,10 @@ function show_users($id){
 function delete_item($id){
 	global $dbc;
 	
-	$query = 'DELETE FROM stuff WHERE stuff.id=' .$id;
+	if(!is_numeric($id))
+		return false;
+	else
+		$query = 'DELETE FROM stuff WHERE stuff.id=' .$id;
 	
 	$results = mysqli_query($dbc, $query);
     check_results($results);
@@ -424,7 +427,10 @@ function delete_item($id){
 function delete_user($id){
 	global $dbc;
 	
-	$query = 'DELETE FROM users WHERE id=' .$id;
+	if(!is_numeric($id))
+		return false;
+	else
+		$query = 'DELETE FROM users WHERE id=' .$id;
 	
 	$results = mysqli_query($dbc, $query);
     check_results($results);
@@ -485,7 +491,10 @@ function update_record(){
 function update_item_form($id){
 	global $dbc;
 	
-	$query = 'SELECT * FROM stuff WHERE id=' . $id;
+	if(!is_numeric($id))
+		return false;
+	else
+		$query = 'SELECT * FROM stuff WHERE id=' . $id;
     
     $results = mysqli_query($dbc, $query);
     check_results($results);

@@ -204,7 +204,7 @@ and open the template in the editor.
 								?>
 							</ul>
 					</div>
-					<div class="input-field col s1">
+					<div class="input-field col s2">
 						<a class="waves-effect waves-light btn" href='index.php'>Show All</a>
 					</div>
 				</div>

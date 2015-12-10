@@ -15,6 +15,17 @@ and open the template in the editor.
         <!-- Compiled and minified JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+        <?php
+			require('../includes/limbo_login_tools.php');
+				
+			session_start();
+				
+			# redirect to login page if there is no session open
+			if(!isset($_SESSION['login_user'])){
+				session_destroy();
+				load('login.php');
+			}
+		?>
         <script>
             $(".button-collapse show-on-large").sideNav();
         </script>
@@ -73,7 +84,7 @@ and open the template in the editor.
                     <li><a href="found.php">Found Items</a></li>
                     <li><a href="claimed.php">Claimed Items</a></li>
                     <li><a href="compare.php">Compare Records</a></li>
-					<li><a href="..\index.php">Log Off</a></li>
+					<li><a href="logout.php">Log Out</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>

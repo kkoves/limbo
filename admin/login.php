@@ -50,19 +50,16 @@ and open the template in the editor.
             }
         </script>
 		<?php
-			# Connect to MySQL server and the database
-			require( '../includes/connect_db.php' ) ;
-
-			# Connect to MySQL server and the database
+			require( '../includes/connect_db.php' );
 			require( '../includes/limbo_login_tools.php' );
-            
             require('../includes/helpers.php');
 
             session_start();
             
 			if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
 				global $dbc;
-				
+				$pid = -1;
+                
 				$user = strtolower(trim($_POST['name']));
 				$pass = $_POST['pass'];
 
@@ -74,16 +71,20 @@ and open the template in the editor.
 				
 				$results = mysqli_fetch_array($results);
 				
-				$options = [
-					'cost' => 12,
-					'salt' => $results[0],
-				];
-				
-				$pass = password_hash($pass, PASSWORD_BCRYPT, $options);
+                if(!empty($results)) {
+                    $options = [
+                        'cost' => 12,
+                        'salt' => $results[0],
+                    ];
+                    
+                    $pass = password_hash($pass, PASSWORD_BCRYPT, $options);
 
-				$pid = validate($user, $pass);
+                    $pid = validate($user, $pass);
+                }
+                else
+                    $pid = -1;
 
-				if($pid == -1){
+				if($pid == -1) {
 					echo '<script>$(document).ready(function () {$("#error").html("Login failed, please try again.");});</script>';
 				}
 				else {

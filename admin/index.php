@@ -112,7 +112,7 @@ and open the template in the editor.
                     <li><a href="found.php">Found Items</a></li>
                     <li><a href="claimed.php">Claimed Items</a></li>
                     <li><a href="compare.php">Compare Records</a></li>
-					<li><a href="..\index.php">Log Off</a></li>
+					<li><a href="logout.php">Log Out</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>

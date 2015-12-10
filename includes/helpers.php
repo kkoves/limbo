@@ -973,7 +973,7 @@ function insert_item($status, $date) {
 	
 	#Assign variabled to insert into database from user input in $_POST
 	$loc = $_POST['location'];
-	$title = trim($_POST['title']);
+	$title = $_POST['title'];
 	$descr = $_POST['description'];
 	$category = $_POST['category'];
 	$create_date = $date;
@@ -1107,14 +1107,23 @@ function upload_picture(){
 
 function valid_form() {
     #TODO: add form validation functionality here
+    global $dbc;
     
 	$errors = false; #TODO: make errors array
 	
+    # Validate text data, send back into $_POST variable
+    $title = trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['title'])));
+    
+    $_POST['title'] = $title;
+    
     if(empty($_POST['title']))
         $errors = true;
     
-    $first_name = $_POST['first_name'];
-    $last_name = $_POST['last_name'];
+    $first_name = mysqli_real_escape_string($dbc, htmlspecialchars($_POST['first_name']));
+    $last_name = mysqli_real_escape_string($dbc, htmlspecialchars($_POST['last_name']));
+    
+    $_POST['first_name'] = $first_name;
+    $_POST['last_name'] = $last_name;
     
     #Concatenate separate name fields into one
     $name = trim($first_name) . ' ' . trim($last_name);

@@ -50,31 +50,47 @@ and open the template in the editor.
             }
         </script>
 		<?php
-			# Connect to MySQL server and the database
-			require( '../includes/connect_db.php' ) ;
+			require( '../includes/connect_db.php' );
+			require( '../includes/limbo_login_tools.php' );
+            require('../includes/helpers.php');
 
-			# Connect to MySQL server and the database
-			require( '../includes/limbo_login_tools.php' ) ;
-
+            session_start();
+            
 			if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
-
-				$user = $_POST['name'];
+				global $dbc;
+				$pid = -1;
+                
+				$user = strtolower(trim($_POST['name']));
 				$pass = $_POST['pass'];
-				
-				$options = [
-					'cost' => 12,
-					'salt' => 'PkRMWmhrzL3qFJbmur9KjZhg7chW4TeFnm55B25V2zsZ8W7RJDvJaVESCrhqFcxRL47ZbvKMtJrDwCyRUwKCjEnuybE6aGcB5NR97WW7bDqQHP5jLnVhtZqkPu5u2hmhMKeC9kPmqn3cNp9pKwcu5Bfha4hyAbHW42SrdydRK4uCCEYtNczgN9EGhm2c37d2AmWtS4sat9CxFjdK7w25ydCrfA5GA9PWEVEd3TaVHCkjqz22avgY7HuAEVKHUTyb',
-				];
-				
-				$pass = password_hash($pass, PASSWORD_BCRYPT, $options);
 
-				$pid = validate($user, $pass);
+				# Queries the database for salt unique to users to use in hash function
+				$query = 'SELECT salt FROM users WHERE user="' . $user . '"';
+				
+				$results = mysqli_query($dbc, $query);
+				check_results($results);
+				
+				$results = mysqli_fetch_array($results);
+				
+                if(!empty($results)) {
+                    $options = [
+                        'cost' => 12,
+                        'salt' => $results[0],
+                    ];
+                    
+                    $pass = password_hash($pass, PASSWORD_BCRYPT, $options);
 
-				if($pid == -1){
+                    $pid = validate($user, $pass);
+                }
+                else
+                    $pid = -1;
+
+				if($pid == -1) {
 					echo '<script>$(document).ready(function () {$("#error").html("Login failed, please try again.");});</script>';
 				}
-				else
+				else {
+                    $_SESSION['login_user'] = $user;
 					load('index.php', $pid);
+                }
 			}
 		?>
 
@@ -116,7 +132,7 @@ and open the template in the editor.
                 <div class="nav-wrapper">
                     <a id="mainPage" href="#" class="brand-logo center">Login Page</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a id="clock" href="collapsible.html">Time</a></li>
+                        <li><a id="clock" href="#">Time</a></li>
                     </ul>
                 </div>
             </nav>

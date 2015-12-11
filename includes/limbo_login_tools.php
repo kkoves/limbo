@@ -8,7 +8,7 @@ RC	 7-Nov-13	Created.
 <?php
 
 # Includes these helper functions
-require( 'helpers.php' ) ;
+#require( 'helpers.php' ) ;
 
 # Loads a specified or default URL.
 function load( $page, $pid = -1 )
@@ -21,8 +21,6 @@ function load( $page, $pid = -1 )
   $url .= '/' . $page;
 
   # Execute redirect then quit.
-  session_start();
-
   header("Location: $url");
 
   exit();
@@ -43,7 +41,7 @@ function validate($user = '', $pass = '')
 
     # Execute the query
     $results = mysqli_query( $dbc, $query );
-    check_results($results);
+    #check_results($results);
 
     # If we get no rows, the login failed
     if (mysqli_num_rows( $results ) == 0 )

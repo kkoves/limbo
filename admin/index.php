@@ -22,12 +22,10 @@ and open the template in the editor.
                 $('.modal-trigger').leanModal();
 				$('select').material_select();
                 
-                var str = window.location.href;
+                var loc = window.location.href;
                 
-                if(str.indexOf("?id=") > -1)
+                if(loc.indexOf("?id=") > -1)
                     $('#modal1').openModal();
-                /*if(window.location == "http://localhost/Assignments/Assignment%204/User/index.php")
-                    $('#modal1').closeModal();*/
                 
                 $(".button-collapse show-on-large").sideNav();
             });
@@ -56,14 +54,20 @@ and open the template in the editor.
 		<?php
 			require('../includes/connect_db.php');
 			require('../includes/helpers.php');
-			
-			if(isset($_GET['delete'])){
-				delete_user($_GET['delete']);
-			}
-		?>
-		<?php
-            if($_SERVER['REQUEST_METHOD'] == 'POST') {
+			require('../includes/limbo_login_tools.php');
+            
+            session_start();
+            
+            # redirect to login page if there is no session open
+            if(!isset($_SESSION['login_user']))
+                load('login.php');
+            
+			if(isset($_POST['deleteID'])) 
+				delete_user($_POST['deleteID']);
+            
+            if(isset($_POST['user'])) {
 				add_admin(); // Adds a new admin along with the current timestamp
+				$_POST = array();
 			}
         ?>
         <style>
@@ -96,7 +100,7 @@ and open the template in the editor.
                 <div class="nav-wrapper">
                     <a id="mainPage" href="#" class="brand-logo center">Admin Main Page</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a id="clock" href="collapsible.html">Time</a></li>
+                        <li><a id="clock" href="#">Time</a></li>
                     </ul>
                 </div>
             </nav>
@@ -108,7 +112,7 @@ and open the template in the editor.
                     <li><a href="found.php">Found Items</a></li>
                     <li><a href="claimed.php">Claimed Items</a></li>
                     <li><a href="compare.php">Compare Records</a></li>
-					<li><a href="..\index.php">Log Off</a></li>
+					<li><a href="logout.php">Log Out</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>
@@ -121,10 +125,8 @@ and open the template in the editor.
 						<h4>Lost/Found Item Detail</h4>
 						<p>
 							<?php
-								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
-									if(isset($_GET['id']))
-										show_record($_GET['id']);
-								}
+								if(isset($_GET['id']))
+									show_record($_GET['id']);
 							?>
 						</p>
 					</div>
@@ -140,8 +142,6 @@ and open the template in the editor.
 				<table>
 				<th>Add New Admin</th>
 				<tr id="error" style='color:red'></tr>
-				<tr id="pass_check"></tr>
-				<tr id="pass_check_confirm"></tr>
 					<tr>
 						<td>
 							<div class="row">
@@ -149,17 +149,17 @@ and open the template in the editor.
 									<div class="row">
 										<div class="input-field col s3">
 											<i class="material-icons prefix">account_circle</i>
-											<input name="user" id="user" type="text" class="validate" value="<?php if(isset($_POST['user'])) echo $_POST['user']; ?>">
+											<input required name="user" id="user" type="text" class="validate" value="<?php if(isset($_POST['user'])) echo $_POST['user']; ?>">
 											<label for="user">Username</label>
 										</div>
 										<div class="input-field col s3">
 											<i class="material-icons prefix">lock_outline</i>
-											<input name="pass" id="pass" type="password" class="validate">
+											<input required name="pass" id="pass" type="password" class="validate">
 											<label for="pass">Password</label>
 										</div>
 										<div class="input-field col s3">
 											<i class="material-icons prefix">lock_outline</i>
-											<input name="pass_confirm" id="pass_confirm" type="password" class="validate">
+											<input required name="pass_confirm" id="pass_confirm" type="password" class="validate">
 											<label for="pass_confirm">Confirm Password</label>
 										</div>
 									</div>

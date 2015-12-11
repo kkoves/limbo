@@ -24,8 +24,11 @@ and open the template in the editor.
             require('includes/connect_db.php');
             
             if($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if(valid_form()) // if form is valid
+                if(valid_form()) { // if form is valid 
 					insert_item('Found', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
+					$_POST = array();
+                    echo '<script>$(document).ready(function () {$("#success").html("Success! Your found item has been submitted.");});</script>';
+				}
 			}
         ?>
         <script>
@@ -90,7 +93,7 @@ and open the template in the editor.
                 <div class="nav-wrapper">
                     <a id="mainPage" href="#" class="brand-logo center">Found Page</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a id="clock" href="collapsible.html">Time</a></li>
+                        <li><a id="clock" href="#">Time</a></li>
                     </ul>
                 </div>
             </nav>
@@ -98,8 +101,8 @@ and open the template in the editor.
                 <ul id="slide-out" class="side-nav fixed">
                     <p align="center"><img height="150px" width="150px" src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4b/Marist_College_Seal_-_Vector.svg/1016px-Marist_College_Seal_-_Vector.svg.png"/></p>
                     <li><a href="index.php">Main Page</a></li>
-                    <li><a href="lost.php">Lost Items</a></li>
-                    <li><a href="found.php">Found Items</a></li>
+                    <li><a href="lost.php">Report Lost Item</a></li>
+                    <li><a href="found.php">Report Found Item</a></li>
                     <li><a href="claimed.php">Claimed Items</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
@@ -110,33 +113,35 @@ and open the template in the editor.
                 <div class="row">
                     <div class="col s12">
                         <div id="foundItemForm" class="row">
-                            <form class="col s12" action="found.php" method="POST">
+                            <form enctype="multipart/form-data" class="col s12" action="found.php" method="POST">
+                                <div id="error" style="color:red"></div>
+                                <div id="success" style="color:green"></div>
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input required placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
-                                        <label for="title">Title*</label>
+                                        <label for="title">Title<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <input required placeholder="User's First Name" name="first_name" type="text" class="validate" value="<?php if(isset($_POST['first_name'])) echo $_POST['first_name']; ?>">
-                                        <label for="first_name">First Name*</label>
+                                        <label for="first_name">First Name<span style="color:#B31B1B">*</span></label>
                                     </div>
                                     <div class="input-field col s3">
                                         <input required placeholder="User's Last Name" name="last_name" type="text" class="validate" value="<?php if(isset($_POST['last_name'])) echo $_POST['last_name']; ?>">
-                                        <label for="last_name">Last Name*</label>
+                                        <label for="last_name">Last Name<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">email</i>
-                                        <input required name="email" type="email" class="validate" value="<?php if(isset($_POST['email'])) echo $_POST['email']; ?>">
-                                        <label for="email">Email*</label>
+                                        <input required name="finder_email" type="email" class="validate" value="<?php if(isset($_POST['finder_email'])) echo $_POST['finder_email']; ?>">
+                                        <label for="finder_email">Email<span style="color:#B31B1B">*</span></label>
                                     </div>
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
-                                        <input name="phone" type="number" class="validate" value="<?php if(isset($_POST['phone'])) echo $_POST['phone']; ?>">
-                                        <label for="email">Phone #</label>
+                                        <input name="finder_phone" type="number" class="validate" value="<?php if(isset($_POST['finder_phone'])) echo $_POST['finder_phone']; ?>">
+                                        <label for="finder_phone">Phone #</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -161,17 +166,17 @@ and open the template in the editor.
                                                 }
                                             ?>
                                         </select>
-                                        <label>Location Found*</label>
+                                        <label>Location Found<span style="color:#B31B1B">*</span></label>
                                     </div>
 									<div class="input-field col s3">
-										<input required name="room" type="text" class="validate" value="<?php if(isset($_POST['room'])) echo $_POST['room']; ?>">
-										<label for="room">Room #*</label>
+										<input name="room" type="text" class="validate" value="<?php if(isset($_POST['room'])) echo $_POST['room']; ?>">
+										<label for="room">Room #</label>
 									</div>
                                 </div>
                                 <div class="row">
 									<div class="input-field col s3">
                                         <input placeholder="Year-Month-Day" type="date" class="datepicker" name="date" value="<?php if(isset($_POST['date'])) echo $_POST['date']; ?>">
-										<label for="date">Date Found*</label>
+										<label for="date">Date Found<span style="color:#B31B1B">*</span></label>
                                     </div>
                                     <div class="input-field col s3">
                                         <select required name="category">
@@ -194,33 +199,34 @@ and open the template in the editor.
                                                 }
                                             ?>
                                         </select>
-                                        <label>Item Type*</label>
+                                        <label>Item Type<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s6">
-                                        <div class="row">
-                                            <div class="input-field col s12">
-                                                <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
-                                                <label for="textarea1">Description*</label>
-                                            </div>
+                                        <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
+                                        <label for="textarea1">Description<span style="color:#B31B1B">*</span></label>
+                                    </div>
+                                </div>
+                                <!--
+                                <div class="row">
+                                    <div class="file-field input-field col s6">
+                                        <div class="btn red darken-4">
+                                            <span>Photo</span>
+                                            <input type="file" name="photo">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text" name="filepath">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="file-field input-field col s6">
-                                    <div class="btn red darken-4">
-                                        <span>Photo</span>
-                                        <input type="file" name="photo">
+                                -->
+                                <div class="row">
+                                    <div align="right" class="input-field col s6">
+                                        <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+                                            <i class="material-icons right">send</i>
+                                        </button>
                                     </div>
-                                    <div class="file-path-wrapper">
-                                        <input class="file-path validate" type="text" name="filepath">
-                                    </div>
-                                </div>
-                                <br><br><br>
-                                <div align="right" class="row">
-                                    <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
-                                        <i class="material-icons right">send</i>
-                                    </button>
                                 </div>
                             </form>
                         </div>

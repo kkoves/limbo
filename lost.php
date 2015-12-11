@@ -26,9 +26,13 @@ and open the template in the editor.
             if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if(valid_form()) { // if form is valid
 					insert_item('Lost', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
+                    echo '<script>$(document).ready(function () {$("#success").html("Success! Your lost item has been submitted.");});</script>';
                     
-                    if(!empty($_POST['photo']))
+                    /*if(!empty($_POST['photo'])){
                         upload_picture();
+					}*/
+					
+					$_POST = array();
                 }
 			}
         ?>
@@ -94,7 +98,7 @@ and open the template in the editor.
                 <div class="nav-wrapper">
                     <a id="mainPage" href="#" class="brand-logo center">Lost Page</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a id="clock" href="collapsible.html">Time</a></li>
+                        <li><a id="clock" href="#">Time</a></li>
                     </ul>
                 </div>
             </nav>
@@ -102,8 +106,8 @@ and open the template in the editor.
                 <ul id="slide-out" class="side-nav fixed">
                     <p align="center"><img height="150px" width="150px" src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4b/Marist_College_Seal_-_Vector.svg/1016px-Marist_College_Seal_-_Vector.svg.png"/></p>
                     <li><a href="index.php">Main Page</a></li>
-                    <li><a href="lost.php">Lost Items</a></li>
-                    <li><a href="found.php">Found Items</a></li>
+                    <li><a href="lost.php">Report Lost Item</a></li>
+                    <li><a href="found.php">Report Found Item</a></li>
                     <li><a href="claimed.php">Claimed Items</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
@@ -111,42 +115,45 @@ and open the template in the editor.
         </header>
         <main>
             <div class="container">
+                
                 <div class="row">
                     <div class="col s12">
                         <div id="lostItemForm" class="row">
                             <form enctype="multipart/form-data" class="col s12" action="lost.php" method="POST">
+                                <div id="error" style="color:red"></div>
+                                <div id="success" style="color:green"></div>
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input required placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
-                                        <label for="title">Title*</label>
+                                        <label for="title">Title<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <input required placeholder="User's First Name" name="first_name" type="text" class="validate" value="<?php if(isset($_POST['first_name'])) echo $_POST['first_name']; ?>">
-                                        <label for="first_name">First Name*</label>
+                                        <label for="first_name">First Name<span style="color:#B31B1B">*</span></label>
                                     </div>
                                     <div class="input-field col s3">
                                         <input required placeholder="User's Last Name" name="last_name" type="text" class="validate" value="<?php if(isset($_POST['last_name'])) echo $_POST['last_name']; ?>">
-                                        <label for="last_name">Last Name*</label>
+                                        <label for="last_name">Last Name<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">email</i>
-                                        <input required name="email" type="email" class="validate" value="<?php if(isset($_POST['email'])) echo $_POST['email']; ?>">
-                                        <label for="email">Email*</label>
+                                        <input required name="owner_email" type="email" class="validate" value="<?php if(isset($_POST['owner_email'])) echo $_POST['owner_email']; ?>">
+                                        <label for="owner_email">Email<span style="color:#B31B1B">*</span></label>
                                     </div>
                                     <div class="input-field col s3">
                                         <i class="material-icons prefix">phone</i>
-                                        <input name="phone" type="number" class="validate" value="<?php if(isset($_POST['phone'])) echo $_POST['phone']; ?>">
-                                        <label for="email">Phone #</label>
+                                        <input name="owner_phone" type="number" class="validate" value="<?php if(isset($_POST['owner_phone'])) echo $_POST['owner_phone']; ?>">
+                                        <label for="owner_phone">Phone #</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s3">
                                         <select required name="location">
-                                            <option value="" disabled selected>Building</option>
+                                            <option value="" disabled <?php if(!isset($_POST['location'])) echo 'selected'; ?> >Building</option>
                                             <?php
                                                 #Query database for campus locations
                                                 $query = 'SELECT id, short_name FROM locations ORDER BY short_name ASC';
@@ -160,12 +167,15 @@ and open the template in the editor.
                                                 #Populate drop-down list, if we got results from the query
                                                 if($results) {
                                                     while($row = mysqli_fetch_array($results , MYSQLI_ASSOC)) {
-                                                        echo '<option value="' . $row['id'] . '">' . $row['short_name'] . '</option>';
+                                                        if(isset($_POST['location']) && $row['id'] === $_POST['location'])
+                                                            echo '<option value="' . $row['id'] . '" selected>' . $row['short_name'] . '</option>';
+                                                        else
+                                                            echo '<option value="' . $row['id'] . '">' . $row['short_name'] . '</option>';
                                                     }
                                                 }
                                             ?>
                                         </select>
-                                        <label>Location Lost*</label>
+                                        <label>Location Lost<span style="color:#B31B1B">*</span></label>
                                     </div>
 									<div class="input-field col s3">
 										<input name="room" type="text" class="validate" value="<?php if(isset($_POST['room'])) echo $_POST['room']; ?>">
@@ -175,11 +185,11 @@ and open the template in the editor.
                                 <div class="row">
 									<div class="input-field col s3">
                                         <input required placeholder="Year-Month-Day" type="date" class="datepicker" name="date" value="<?php if(isset($_POST['date'])) echo $_POST['date']; ?>">
-										<label for="date">Date Lost*</label>
+										<label for="date">Date Lost<span style="color:#B31B1B">*</span></label>
                                     </div>
                                     <div class="input-field col s3">
                                         <select required name="category">
-                                            <option value="" disabled selected>Category</option>
+                                            <option value="" disabled <?php if(!isset($_POST['location'])) echo 'selected'; ?> >Category</option>
                                             <?php
                                                 #Query database for item categories
                                                 $query = 'SELECT * FROM categories ORDER BY name ASC';
@@ -193,38 +203,42 @@ and open the template in the editor.
                                                 #Populate drop-down list, if we got results from the query
                                                 if($results) {
                                                     while($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
-                                                        echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
+                                                        if(isset($_POST['category']) && $row['id'] === $_POST['category'])
+                                                            echo '<option value="' . $row['id'] . '" selected>' . $row['name'] . '</option>';
+                                                        else
+                                                            echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
                                                     }
                                                 }
                                             ?>
                                         </select>
-                                        <label>Item Type*</label>
+                                        <label>Item Type<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="input-field col s6">
-                                        <div class="row">
-                                            <div class="input-field col s12">
-                                                <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
-                                                <label for="textarea1">Description*</label>
-                                            </div>
+                                        <textarea required id="description" name="description" class="materialize-textarea" length="1000"></textarea>
+                                        <label for="textarea1">Description<span style="color:#B31B1B">*</span></label>
+                                    </div>
+                                </div>
+                                <!--
+                                <div class="row">
+                                    <div class="file-field input-field col s6">
+                                        <div class="btn red darken-4">
+                                            <span>Photo</span>
+                                            <input type="file" name="photo">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text" name="filepath">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="file-field input-field col s6">
-                                    <div class="btn red darken-4">
-                                        <span>Photo</span>
-                                        <input type="file" name="photo">
+                                -->
+                                <div class="row">
+                                    <div align="right" class="input-field col s6">
+                                        <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+                                            <i class="material-icons right">send</i>
+                                        </button>
                                     </div>
-                                    <div class="file-path-wrapper">
-                                        <input class="file-path validate" type="text" name="filepath">
-                                    </div>
-                                </div>
-                                <br><br><br>
-                                <div align="right" class="row">
-                                    <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
-                                        <i class="material-icons right">send</i>
-                                    </button>
                                 </div>
                             </form>
                         </div>

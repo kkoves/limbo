@@ -121,7 +121,7 @@ and open the template in the editor.
                 <div class="nav-wrapper">
                     <a id="mainPage" href="#" class="brand-logo center">Admin Found Items Page</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a id="clock" href="collapsible.html">Time</a></li>
+                        <li><a id="clock" href="#">Time</a></li>
                     </ul>
                 </div>
             </nav>

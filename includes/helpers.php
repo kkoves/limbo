@@ -116,7 +116,7 @@ function show_records_found($dbc) {
     #$locations = get_locations();
     
 	# Create a query to get location, title, date, category, and status, sorted by date
-    $query = 'SELECT * FROM stuff WHERE status=1 ORDER BY id DESC';
+    $query = 'SELECT * FROM stuff WHERE status="found" ORDER BY id DESC';
 
     # Execute the query
     $results = mysqli_query( $dbc , $query );
@@ -224,8 +224,6 @@ function show_category_filter($status, $id, $user){
 
         # End the table
         echo '</table>';
-        
-        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
 	}
     else if(mysqli_num_rows($results) === 0)
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
@@ -236,7 +234,7 @@ function show_category_filter($status, $id, $user){
 
 # Shows a table filtered by location
 function show_location_filter($status, $id, $user){
-	global $dbc;
+	global $dbc, $debug;
 	
 	if(!is_numeric($id))
 		return false;
@@ -370,7 +368,7 @@ function show_records_lost($dbc) {
     #$locations = get_locations();
     
 	# Create a query to get location, title, date, category, and status, sorted by date
-    $query = 'SELECT * FROM stuff WHERE status=2 ORDER BY id DESC';
+    $query = 'SELECT * FROM stuff WHERE status="lost" ORDER BY id DESC';
 
     # Execute the query
     $results = mysqli_query( $dbc , $query );
@@ -415,6 +413,72 @@ function show_records_lost($dbc) {
 
         # End the table
         echo '</table>';
+
+        # Free up the results in memory
+        mysqli_free_result( $results );
+    }
+}
+
+# Shows the lost items in stuff table of limbo_db
+function show_records_claimed($dbc, $user) {
+	global $dbc, $debug;
+	
+    #$locations = get_locations();
+    
+	# Create a query to get location, title, date, category, and status, sorted by date
+    $query = 'SELECT * FROM stuff WHERE status="claimed" ORDER BY id DESC';
+
+    # Execute the query
+    $results = mysqli_query( $dbc , $query );
+    
+    #Output SQL errors, if any
+    check_results($results);
+
+    # Show results, if query succeeded
+    if( $results )
+    {	
+        echo '<table>';
+        echo '<tr>';
+		echo '<th>ID</th>';
+        echo '<th>Title</th>';
+        echo '<th>Location</th>';
+        echo '<th>Date</th>';
+        echo '<th>Category</th>';
+        echo '<th>Status</th>';
+		if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f"){
+			echo '<th style="text-align:center">Update Item</th>';
+			echo '<th style="text-align:center">Delete Item</th>';
+		}
+        echo '</tr>';
+
+        # For each row result, generate a table row
+        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
+        {
+            #$location = $locations[ $row['location_id'] ];
+            $location = get_location($row['location_id']);
+            $date = format_date($row['create_date'], "m/d/Y");
+            $category = get_category($row['category']);
+			$url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+            
+            echo '<tr>';
+			echo '<th>' . $row['id'] . '</th>';
+            echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . $location . '</td>';
+            echo '<td>' . $date . '</td>';
+            echo '<td>' . $category . '</td>';
+            echo '<td>' . $row['status'] . '</td>';
+			if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f"){
+				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="' . $url . '?updateID=' . $row['id'] . '">edit</a>' . '</td>';
+				echo '<td style="text-align:center">' . '<form class="col s12" action="' . $url . '" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			}
+			echo '</tr>';
+        }
+
+        # End the table
+        echo '</table>';
+		
+		if($debug)
+			echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . addslashes($query) . '");});</script>';
 
         # Free up the results in memory
         mysqli_free_result( $results );
@@ -980,7 +1044,7 @@ function claim_found_item($status) {
         $title = $row['title'];
         
         # update item as found only if it has not been reported found already
-        if(strpos($title, 'REPORTED FOUND:'))
+        if(!is_numeric(strpos($title, 'REPORTED FOUND:')))
             $query = 'UPDATE stuff SET title="REPORTED FOUND: ' . $title . '", update_date=NOW()' . ', found_date=NOW()'. ', finder_email="' . $_POST['finder_email'] . '", finder_phone="' . $_POST['finder_phone'] . '", finder="' . $_POST['finder_full_name'] . '", status="' . $status . '" WHERE id=' . $_POST['id'];
         else
             return false;

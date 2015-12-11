@@ -118,7 +118,7 @@ and open the template in the editor.
                 <div class="nav-wrapper">
                     <a id="mainPage" href="#" class="brand-logo center">Main Page</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a id="clock" href="collapsible.html">Time</a></li>
+                        <li><a id="clock" href="#">Time</a></li>
                     </ul>
                 </div>
             </nav>
@@ -126,8 +126,8 @@ and open the template in the editor.
                 <ul id="slide-out" class="side-nav fixed">
                     <p align="center"><img height="150px" width="150px" src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4b/Marist_College_Seal_-_Vector.svg/1016px-Marist_College_Seal_-_Vector.svg.png"/></p>
                     <li><a href="index.php">Main Page</a></li>
-                    <li><a href="lost.php">Lost Items</a></li>
-                    <li><a href="found.php">Found Items</a></li>
+                    <li><a href="lost.php">Report Lost Item</a></li>
+                    <li><a href="found.php">Report Found Item</a></li>
                     <li><a href="claimed.php">Claimed Items</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>

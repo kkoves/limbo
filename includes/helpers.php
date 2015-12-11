@@ -1013,55 +1013,83 @@ function update_item_form($id){
 # Updates the table with the owner or finder information
 function claim_found_item($status) {
     global $dbc, $debug;
-    
-    /*if(is_numeric($_POST['id']))
-        $id = $_POST['id'];
-    else
-        return false;
-    
-    if(isset($_POST['owner_email'])){
-        $owner = $_POST['full_name'];
-        $owner_email = $_POST['owner_email'];
-        if(isset($_POST['owner_phone']))
-            $owner_phone = $_POST['owner_phone'];
-        else
-            $owner_phone = '';
+	
+    if($status === 'Claimed'){
+		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_email']))))
+			$owner_email = $_POST['owner_email'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+	
+		if(trim(is_numeric(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_phone'])))))
+			$owner_phone = $_POST['owner_phone'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_full_name']))))
+			$owner_full_name = $_POST['owner_full_name'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($status))))
+			$status1 = $status;
+		else
+			return false;
+		if(is_numeric($_POST['id']))
+			$id = $_POST['id'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+		
+        $query = 'UPDATE stuff SET update_date=NOW()' . ', claimed_date=NOW()' . ', owner_email="' . $owner_email . '", owner_phone="' . $owner_phone . '", owner="' . $owner_full_name . '", status="' . $status1 . '" WHERE id=' . $id;
     }
-    else{
-        $owner = '';
-        $owner_email = '';
-        $owner_phone = '';
-    }
-        
-    if(isset($_POST['finder_email'])){
-        $finder = $_POST['full_name'];
-        $finder_email = $_POST['owner_email'];
-        if(isset($_POST['finder_phone']))
-            $finder_phone = $_POST['finder_phone'];
-        else
-            $finder_phone = '';
-    }
-    else{
-        $finder = '';
-        $finder_email = '';
-        $finder_phone = '';
-    }*/
-    
-    #$query = 'UPDATE SET owner_email="' . $owner_email . '", owner_phone="' . $owner_phone . '", finder_email="' . $finder_email . '", finder_phone="' . $finder_phone . '", owner="' . $owner . '", finder="' . $finder . '", status="' . $status . '" WHERE id=' . $id;
-    
-    if($status === 'Claimed')
-        $query = 'UPDATE stuff SET update_date=NOW()' . ', claimed_date=NOW()' . ', owner_email="' . $_POST['owner_email'] . '", owner_phone="' . $_POST['owner_phone'] . '", owner="' . $_POST['owner_full_name'] . '", status="' . $status . '" WHERE id=' . $_POST['id'];
-    
+	
     else if($status === 'Found') {
         $title_query = 'SELECT title FROM stuff WHERE id=' . $_POST['id'];
         $title_results = mysqli_query($dbc, $title_query);
         check_results($title_results);
         $row = mysqli_fetch_array($title_results);
         $title = $row['title'];
+		
+		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_email']))))
+			$finder_email = $_POST['finder_email'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+	
+		if(trim(is_numeric(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_phone'])))))
+			$finder_phone = $_POST['finder_phone'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_full_name']))))
+			$finder_full_name = $_POST['finder_full_name'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($status))))
+			$status1 = $status;
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
+		if(is_numeric($_POST['id']))
+			$id = $_POST['id'];
+		else {
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			return false;
+		}
         
         # update item as found only if it has not been reported found already
         if(!is_numeric(strpos($title, 'REPORTED FOUND:')))
-            $query = 'UPDATE stuff SET title="REPORTED FOUND: ' . $title . '", update_date=NOW()' . ', found_date=NOW()'. ', finder_email="' . $_POST['finder_email'] . '", finder_phone="' . $_POST['finder_phone'] . '", finder="' . $_POST['finder_full_name'] . '", status="' . $status . '" WHERE id=' . $_POST['id'];
+            $query = 'UPDATE stuff SET title="REPORTED FOUND: ' . $title . '", update_date=NOW()' . ', found_date=NOW()'. ', finder_email="' . $finder_email . '", finder_phone="' . $finder_phone . '", finder="' . $finder_full_name . '", status="' . $status1 . '" WHERE id=' . $id;
         else
             return false;
     }

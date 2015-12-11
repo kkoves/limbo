@@ -16,18 +16,39 @@ and open the template in the editor.
         <!-- Compiled and minified JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+        <?php
+            require('includes/helpers.php');
+            require('includes/connect_db.php');
+            
+            if(isset($_POST['owner_email'])) {
+                #if(valid_form()) { // if form is valid
+					claim_found_item("Claimed");	
+					$_POST = array();
+                    echo '<script>$(document).ready(function () {$("#success").html("Success! The item has been marked as claimed. An admin will be in contact with you to address your claim.");});</script>';                    
+                #}
+			}
+            else if(isset($_POST['finder_email'])){
+                #if(valid_form()) { // if form is valid
+					claim_found_item("Found");	
+					$_POST = array();
+                    echo '<script>$(document).ready(function () {$("#success").html("Success! The item has been marked found.");});</script>';
+                #}
+            }
+        ?>
         <script>
             $(document).ready(function(){
                 // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
                 $('.modal-trigger').leanModal();
 				$('select').material_select();
                 
+                // Display lost/found item detail modal if window contains "id?=" and an id number
                 var str = window.location.href;
                 
                 if(str.indexOf("?id=") > -1)
                     $('#modal1').openModal();
-                /*if(window.location == "http://localhost/Assignments/Assignment%204/User/index.php")
-                    $('#modal1').closeModal();*/
+                
+                if(str.indexOf("?claimID=") > -1)
+                    $('#modal2').openModal();
                 
                 $(".button-collapse show-on-large").sideNav();
 				
@@ -120,22 +141,140 @@ and open the template in the editor.
 						<h4>Lost/Found Item Detail</h4>
 						<p>
 							<?php
-								require('includes/connect_db.php');
-								require('includes/helpers.php');
-								
-								session_destroy();
-						
-								if($_SERVER[ 'REQUEST_METHOD' ] == 'GET') {
-									if(isset($_GET['id']))
-										show_record($_GET['id']);
-								}
+                                if(isset($_GET['id']))
+                                    show_record($_GET['id']);
 							?>
 						</p>
 					</div>
 					<div class="modal-footer">
 						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+                        <?php 
+                            global $dbc; 
+                            
+                            if(isset($_GET['id']) && is_numeric($_GET['id'])) {
+                                $query = 'SELECT status FROM stuff WHERE id=' . $_GET['id'];
+                                
+                                $results = mysqli_query($dbc, $query);
+                                check_results($results);
+                                
+                                $row = mysqli_fetch_array($results);
+                                
+                                $status = $row['status'];
+                                
+                                if($status === 'Lost')
+                                    echo '<a href="#found" class="modal-action waves-effect waves-green btn-flat modal-trigger">Found This Item?</a>';
+                                else if($status === 'Found')
+                                    echo '<a href="#claimed" class="modal-action waves-effect waves-green btn-flat modal-trigger ">Claim This Item</a>';
+                            }
+                                
+                                
+                        ?>
 					</div>
 				</div>
+                <!-- Modal dialog for "Claim/Found Item Form" -->
+				<div id="claimed" class="modal modal-fixed-footer">
+					<div class="modal-content">
+						<h4>Claim Item Form</h4>
+						<p>
+                             <div class="row">
+                                <div class="col s12">
+                                    <div id="claimedItemForm" class="row">
+                                        <form enctype="multipart/form-data" class="col s12" action="index.php" method="POST">
+                                        <div id="modalError" style="color:red"></div>
+                                        <div class="row">
+                                            <div class="input-field col s12">
+                                                <input required placeholder="Owner's Name" name="owner_full_name" type="text" class="validate" value="<?php if(isset($_POST['owner_full_name'])) echo $_POST['owner_full_name']; ?>">
+                                                <label for="owner_full_name">Owner's Name<span style="color:#B31B1B">*</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-field col s6">
+                                                <i class="material-icons prefix">email</i>
+                                                <input required name="owner_email" type="email" class="validate" value="<?php if(isset($_POST['owner_email'])) echo $_POST['owner_email']; ?>">
+                                                <label for="owner_email">Email<span style="color:#B31B1B">*</span></label>
+                                            </div>
+                                            <div class="input-field col s6">
+                                                <i class="material-icons prefix">phone</i>
+                                                <input name="owner_phone" type="number" class="validate" value="<?php if(isset($_POST['owner_phone'])) echo $_POST['owner_phone']; ?>">
+                                                <label for="owner_phone">Phone #</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div align="right" class="input-field col s12">
+                                                <input hidden name="id" type="text" class="validate" value="<?php if(isset($_GET['id']) && is_numeric($_GET['id'])) echo $_GET['id']; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div align="right" class="input-field col s12">
+                                                <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+                                                    <i class="material-icons right">send</i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </p>
+                    </div>
+					<div class="modal-footer">
+						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+                        
+					</div>
+				</div>
+                <!-- Modal dialog for "Claim/Found Item Form" -->
+				<div id="found" class="modal modal-fixed-footer">
+					<div class="modal-content">
+						<h4>Found Item Form</h4>
+						<p>
+                             <div class="row">
+                                <div class="col s12">
+                                    <div id="claimedItemForm" class="row">
+                                        <form enctype="multipart/form-data" class="col s12" action="index.php" method="POST">
+                                        <div id="error" style="color:red"></div>
+                                        <div class="row">
+                                            <div class="input-field col s12">
+                                                <input required placeholder="Finder's Name" name="finder_full_name" type="text" class="validate" value="<?php if(isset($_POST['finder_full_name'])) echo $_POST['finder_full_name']; ?>">
+                                                <label for="finder_full_name">Finder's Name<span style="color:#B31B1B">*</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-field col s6">
+                                                <i class="material-icons prefix">email</i>
+                                                <input required name="finder_email" type="email" class="validate" value="<?php if(isset($_POST['owner_email'])) echo $_POST['owner_email']; ?>">
+                                                <label for="finder_email">Email<span style="color:#B31B1B">*</span></label>
+                                            </div>
+                                            <div class="input-field col s6">
+                                                <i class="material-icons prefix">phone</i>
+                                                <input name="finder_phone" type="number" class="validate" value="<?php if(isset($_POST['owner_phone'])) echo $_POST['owner_phone']; ?>">
+                                                <label for="finder_phone">Phone #</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div align="right" class="input-field col s12">
+                                                <input hidden name="id" type="text" class="validate" value="<?php if(isset($_GET['id']) && is_numeric($_GET['id'])) echo $_GET['id']; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div align="right" class="input-field col s12">
+                                                <button class="btn waves-effect waves-light red darken-4" type="submit">Submit
+                                                    <i class="material-icons right">send</i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </p>
+                    </div>
+					<div class="modal-footer">
+						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+                        
+					</div>
+				</div>
+                
+                <!-- Filters -->
 				<div class="row">
 					<div class="input-field col s1">
 						<label value="" disabled selected style="color:Black">Filter By:<label>
@@ -160,7 +299,7 @@ and open the template in the editor.
 										}
 									}
 								?>
-							</ul>
+                            </ul>
 					</div>
 					<div class="input-field col s3">
 						<a class='dropdown-button btn' href='#' data-activates='category_drop'><i class="material-icons right">keyboard_arrow_down</i>Category</a>
@@ -225,11 +364,11 @@ and open the template in the editor.
 						
 				?>
 				<div id="error" style="color:red"></div>
+                <div id="success" style="color:green"></div>
 				<?php
 					#Call a helper function (in includes/helpers.php) to list the database contents
 					if(!isset($_GET['location']) && !isset($_GET['category']) && !isset($_GET['status']))
 						show_records($dbc);
-					
 				?>
             </div>
         </main>

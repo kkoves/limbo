@@ -66,7 +66,7 @@ function show_records($dbc) {
     #$locations = get_locations();
     
 	# Create a query to get location, title, date, category, and status, sorted by date
-    $query = 'SELECT * FROM stuff ORDER BY create_date DESC';
+    $query = 'SELECT * FROM stuff WHERE status!="Claimed" ORDER BY create_date DESC';
 
     # Execute the query
     $results = mysqli_query( $dbc , $query );
@@ -95,7 +95,7 @@ function show_records($dbc) {
             $category = get_category($row['category']);
             
             echo '<tr>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
@@ -149,7 +149,7 @@ function show_records_found($dbc) {
             
             echo '<tr>';
 			echo '<th>' . $row['id'] . '</th>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=found.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a class="modal-trigger" href=found.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
@@ -173,10 +173,8 @@ function show_category_filter($status, $id, $user){
 	
 	if(!is_numeric($id))
 		return false;
-	
 	else if($status == "all")
-		$query = 'SELECT * FROM stuff WHERE category=' . $id;	
-	
+		$query = 'SELECT * FROM stuff WHERE category=' . $id . ' AND status!="Claimed"';
 	else
 		$query = 'SELECT * FROM stuff WHERE status="' . $status . '" AND category=' . $id;
 	
@@ -186,7 +184,7 @@ function show_category_filter($status, $id, $user){
 	#Output SQL errors, if any
     check_results($results);
 	
-	if($results){
+	if($results && mysqli_num_rows($results) > 0) {
 		echo '<table>';
         echo '<tr>';
 		echo '<th>ID</th>';
@@ -208,28 +206,32 @@ function show_category_filter($status, $id, $user){
             $location = get_location($row['location_id']);
             $date = format_date($row['create_date'], "m/d/Y");
             $category = get_category($row['category']);
+            $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
             
             echo '<tr>';
 			echo '<th>' . $row['id'] . '</th>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=lost.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
 			if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f"){
-				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
-				echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="' . $url . '?updateID=' . $row['id'] . '">edit</a>' . '</td>';
+				echo '<td style="text-align:center">' . '<form class="col s12" action="' . $url . '" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
 			}
 			echo '</tr>';
         }
 
         # End the table
         echo '</table>';
-
-        # Free up the results in memory
-        mysqli_free_result( $results );
+        
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
 	}
-	return true;
+    else if(mysqli_num_rows($results) === 0)
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+    
+    # Free up the results in memory
+    mysqli_free_result( $results );
 }
 
 # Shows a table filtered by location
@@ -273,17 +275,19 @@ function show_location_filter($status, $id, $user){
             $location = get_location($row['location_id']);
             $date = format_date($row['create_date'], "m/d/Y");
             $category = get_category($row['category']);
+            $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
             
             echo '<tr>';
 			echo '<th>' . $row['id'] . '</th>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=lost.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
             echo '<td>' . $row['status'] . '</td>';
+            
 			if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f"){
-				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="lost.php?updateID=' . $row['id'] . '">edit</a>' . '</td>';
-				echo '<td style="text-align:center">' . '<form class="col s12" action="lost.php" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="' . $url . '?updateID=' . $row['id'] . '">edit</a>' . '</td>';
+				echo '<td style="text-align:center">' . '<form class="col s12" action="' . $url . '" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
 			}
 			echo '</tr>';
         }
@@ -340,10 +344,11 @@ function show_status_filter($status){
             $location = get_location($row['location_id']);
             $date = format_date($row['create_date'], "m/d/Y");
             $category = get_category($row['category']);
+            $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
             
             echo '<tr>';
 			echo '<th>' . $row['id'] . '</th>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=lost.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
@@ -398,7 +403,7 @@ function show_records_lost($dbc) {
             
             echo '<tr>';
 			echo '<th>' . $row['id'] . '</th>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=lost.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . '<a class="modal-trigger" href=lost.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
             echo '<td>' . $category . '</td>';
@@ -416,56 +421,14 @@ function show_records_lost($dbc) {
     }
 }
 
-# Filter Table by Location
-/*function filter_location($id){
-	global $dbc;
-	
-	$query = 'SELECT * FROM stuff WHERE location_id=' . $id;
-	
-	$results = mysqli_query($dbc, $query);
-    check_results($results);
-	
-	if ($results){
-		
-		echo '<table>';
-        echo '<tr>';
-        echo '<th>Title</th>';
-        echo '<th>Location</th>';
-        echo '<th>Date</th>';
-        echo '<th>Category</th>';
-        echo '<th>Status</th>';
-        echo '</tr>';
-
-        # For each row result, generate a table row
-        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
-        {
-            #$location = $locations[ $row['location_id'] ];
-            $location = get_location($row['location_id']);
-            $date = format_date($row['create_date'], "m/d/Y");
-            $category = get_category($row['category']);
-            
-            echo '<tr>';
-            echo '<td>' . '<a onclick="modalClick()" class="modal-trigger" href=index.php?id=' . $row['id'] . '>' . $row['title'] . '</a>' . '</td>';
-            echo '<td>' . $location . '</td>';
-            echo '<td>' . $date . '</td>';
-            echo '<td>' . $category . '</td>';
-            echo '<td>' . $row['status'] . '</td>';
-            echo '</tr>';
-        }
-
-        # End the table
-        echo '</table>';
-
-        # Free up the results in memory
-        mysqli_free_result( $results );
-	}	
-}*/
-
 # Shows a single record
 function show_record($id) {
 	global $dbc;
     
-    $query = 'SELECT * FROM stuff WHERE id=' . $id;
+    if(is_numeric($id))
+        $query = 'SELECT * FROM stuff WHERE id=' . $id;
+    else
+        return false;
     
     $results = mysqli_query($dbc, $query);
     check_results($results);
@@ -530,13 +493,6 @@ function show_record($id) {
                 echo '</tr>';
             }
             
-            if(!empty($row['finder'])) {
-                echo '<tr>';
-                    echo '<td><b>Finder:</b></td>';
-                    echo '<td>' . $row['finder'] . '</td>';
-                echo '</tr>';
-            }
-            
             if(!empty($row['owner_email'])) {
                 echo '<tr>';
                     echo '<td><b>Owner\'s Email:</b></td>';
@@ -548,6 +504,13 @@ function show_record($id) {
                 echo '<tr>';
                     echo '<td><b>Owner\'s Phone Number:</b></td>';
                     echo '<td>' . $row['owner_phone'] . '</td>';
+                echo '</tr>';
+            }            
+            
+            if(!empty($row['finder'])) {
+                echo '<tr>';
+                    echo '<td><b>Finder:</b></td>';
+                    echo '<td>' . $row['finder'] . '</td>';
                 echo '</tr>';
             }
             
@@ -967,6 +930,69 @@ function update_item_form($id){
 	mysqli_free_result($results4);
 }
 
+# Updates the table with the owner or finder information
+function claim_found_item($status) {
+    global $dbc, $debug;
+    
+    /*if(is_numeric($_POST['id']))
+        $id = $_POST['id'];
+    else
+        return false;
+    
+    if(isset($_POST['owner_email'])){
+        $owner = $_POST['full_name'];
+        $owner_email = $_POST['owner_email'];
+        if(isset($_POST['owner_phone']))
+            $owner_phone = $_POST['owner_phone'];
+        else
+            $owner_phone = '';
+    }
+    else{
+        $owner = '';
+        $owner_email = '';
+        $owner_phone = '';
+    }
+        
+    if(isset($_POST['finder_email'])){
+        $finder = $_POST['full_name'];
+        $finder_email = $_POST['owner_email'];
+        if(isset($_POST['finder_phone']))
+            $finder_phone = $_POST['finder_phone'];
+        else
+            $finder_phone = '';
+    }
+    else{
+        $finder = '';
+        $finder_email = '';
+        $finder_phone = '';
+    }*/
+    
+    #$query = 'UPDATE SET owner_email="' . $owner_email . '", owner_phone="' . $owner_phone . '", finder_email="' . $finder_email . '", finder_phone="' . $finder_phone . '", owner="' . $owner . '", finder="' . $finder . '", status="' . $status . '" WHERE id=' . $id;
+    
+    if($status === 'Claimed')
+        $query = 'UPDATE stuff SET update_date=NOW()' . ', claimed_date=NOW()' . ', owner_email="' . $_POST['owner_email'] . '", owner_phone="' . $_POST['owner_phone'] . '", owner="' . $_POST['owner_full_name'] . '", status="' . $status . '" WHERE id=' . $_POST['id'];
+    
+    else if($status === 'Found') {
+        $title_query = 'SELECT title FROM stuff WHERE id=' . $_POST['id'];
+        $title_results = mysqli_query($dbc, $title_query);
+        check_results($title_results);
+        $row = mysqli_fetch_array($title_results);
+        $title = $row['title'];
+        
+        # update item as found only if it has not been reported found already
+        if(strpos($title, 'REPORTED FOUND:'))
+            $query = 'UPDATE stuff SET title="REPORTED FOUND: ' . $title . '", update_date=NOW()' . ', found_date=NOW()'. ', finder_email="' . $_POST['finder_email'] . '", finder_phone="' . $_POST['finder_phone'] . '", finder="' . $_POST['finder_full_name'] . '", status="' . $status . '" WHERE id=' . $_POST['id'];
+        else
+            return false;
+    }
+    
+    $results = mysqli_query($dbc, $query);
+    check_results($results);
+	
+    if($debug)
+        echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . addslashes($query) . '");});</script>';
+}
+
 # Inserts a lost/found item into limbo_db from $_POST
 function insert_item($status, $date) {
     global $dbc;
@@ -1112,15 +1138,18 @@ function valid_form() {
 	$errors = false; #TODO: make errors array
 	
     # Validate text data, send back into $_POST variable
-    $title = trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['title'])));
+    if(isset($_POST['title'])){
+        $title = trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['title'])));
+        $_POST['title'] = $title;  
+    }
     
-    $_POST['title'] = $title;
-    
-    if(empty($_POST['title']))
+    else if(empty($_POST['title']))
         $errors = true;
     
-    $first_name = mysqli_real_escape_string($dbc, htmlspecialchars($_POST['first_name']));
-    $last_name = mysqli_real_escape_string($dbc, htmlspecialchars($_POST['last_name']));
+    if(isset($_POST['first_name']))
+        $first_name = mysqli_real_escape_string($dbc, htmlspecialchars($_POST['first_name']));
+    if(isset($_POST['last_name']))
+        $last_name = mysqli_real_escape_string($dbc, htmlspecialchars($_POST['last_name']));
     
     $_POST['first_name'] = $first_name;
     $_POST['last_name'] = $last_name;
@@ -1150,12 +1179,16 @@ function valid_form() {
         $finder_phone = $_POST['finder_phone'];
     }
     
-    $description = $_POST['description'];
+    if(isset($_POST['description'])){
+        $description = $_POST['description'];
+        
+        #remove new lines (\n) from description field
+        $description = trim(preg_replace('/\s+/', ' ', $description));       
+        $_POST['description'] = $description;
+    }
     
-    #remove new lines (\n) from description field
-    $description = trim(preg_replace('/\s+/', ' ', $description));
-    
-    $_POST['description'] = $description;
+    else if(empty($_POST['description']))
+        $errors = true;
 	
 	#If there are errors in form fields
 	if(!empty($errors)) {

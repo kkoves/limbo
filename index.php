@@ -180,7 +180,6 @@ and open the template in the editor.
                                 <div class="col s12">
                                     <div id="claimedItemForm" class="row">
                                         <form enctype="multipart/form-data" class="col s12" action="index.php" method="POST">
-                                        <div id="modalError" style="color:red"></div>
                                         <div class="row">
                                             <div class="input-field col s12">
                                                 <input required placeholder="Owner's Name" name="owner_full_name" type="text" class="validate" value="<?php if(isset($_POST['owner_full_name'])) echo $_POST['owner_full_name']; ?>">
@@ -231,7 +230,6 @@ and open the template in the editor.
                                 <div class="col s12">
                                     <div id="claimedItemForm" class="row">
                                         <form enctype="multipart/form-data" class="col s12" action="index.php" method="POST">
-                                        <div id="error" style="color:red"></div>
                                         <div class="row">
                                             <div class="input-field col s12">
                                                 <input required placeholder="Finder's Name" name="finder_full_name" type="text" class="validate" value="<?php if(isset($_POST['finder_full_name'])) echo $_POST['finder_full_name']; ?>">

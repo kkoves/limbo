@@ -71,11 +71,11 @@ function show_records($dbc) {
     # Execute the query
     $results = mysqli_query( $dbc , $query );
     
-    #Output SQL errors, if any
+    # Output SQL errors, if any
     check_results($results);
 
     # Show results, if query succeeded
-    if( $results )
+    if($results && mysqli_num_rows($results) > 0)
     {	
         echo '<table>';
         echo '<tr>';
@@ -105,10 +105,13 @@ function show_records($dbc) {
 
         # End the table
         echo '</table>';
-
-        # Free up the results in memory
-        mysqli_free_result( $results );
     }
+    
+    else if(mysqli_num_rows($results) === 0)
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+    
+    # Free up the results in memory
+    mysqli_free_result($results);
 }
 
 # Shows the lost items in stuff table of limbo_db
@@ -125,7 +128,7 @@ function show_records_found($dbc) {
     check_results($results);
 
     # Show results, if query succeeded
-    if( $results )
+    if($results && mysqli_num_rows($results) > 0)
     {	
         echo '<table>';
         echo '<tr>';
@@ -161,10 +164,13 @@ function show_records_found($dbc) {
 
         # End the table
         echo '</table>';
-
-        # Free up the results in memory
-        mysqli_free_result( $results );
     }
+    
+    else if(mysqli_num_rows($results) === 0)
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+    
+    # Free up the results in memory
+    mysqli_free_result($results);
 }
 
 # Shows a table filtered by location
@@ -225,6 +231,7 @@ function show_category_filter($status, $id, $user){
         # End the table
         echo '</table>';
 	}
+    
     else if(mysqli_num_rows($results) === 0)
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
     
@@ -251,7 +258,7 @@ function show_location_filter($status, $id, $user){
 	#Output SQL errors, if any
     check_results($results);
 	
-	if($results){
+	if($results && mysqli_num_rows($results) > 0){
 		echo '<table>';
         echo '<tr>';
 		echo '<th>ID</th>';
@@ -296,7 +303,13 @@ function show_location_filter($status, $id, $user){
         # Free up the results in memory
         mysqli_free_result( $results );
 	}
-	return true;
+    
+    else if(mysqli_num_rows($results) === 0)
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+        
+    
+    # Free up the results in memory
+    mysqli_free_result( $results );
 }
 
 # Shows a table filtered by status
@@ -314,9 +327,6 @@ function show_status_filter($status){
 		$status = "Lost";
 		$query = 'SELECT * FROM stuff WHERE status="' . $status . '"';
 	}
-
-	/*else
-		$query = 'SELECT * FROM stuff WHERE status=' . $status;*/
 	
 	# Execute the query
     $results = mysqli_query( $dbc , $query);
@@ -324,7 +334,7 @@ function show_status_filter($status){
 	#Output SQL errors, if any
     check_results($results);
 	
-	if($results){
+	if($results && mysqli_num_rows($results) > 0) {
 		echo '<table>';
         echo '<tr>';
 		echo '<th>ID</th>';
@@ -336,7 +346,7 @@ function show_status_filter($status){
         echo '</tr>';
 
         # For each row result, generate a table row
-        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
+        while ($row = mysqli_fetch_array($results , MYSQLI_ASSOC))
         {
             #$location = $locations[ $row['location_id'] ];
             $location = get_location($row['location_id']);
@@ -356,11 +366,13 @@ function show_status_filter($status){
 
         # End the table
         echo '</table>';
-
-        # Free up the results in memory
-        mysqli_free_result( $results );
 	}
-	return true;
+    
+    else if(mysqli_num_rows($results) === 0)
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+
+    # Free up the results in memory
+    mysqli_free_result($results);
 }
 
 # Shows the lost items in stuff table of limbo_db
@@ -377,8 +389,7 @@ function show_records_lost($dbc) {
     check_results($results);
 
     # Show results, if query succeeded
-    if( $results )
-    {	
+    if($results && mysqli_num_rows($results) > 0) {	
         echo '<table>';
         echo '<tr>';
 		echo '<th>ID</th>';
@@ -413,10 +424,13 @@ function show_records_lost($dbc) {
 
         # End the table
         echo '</table>';
-
-        # Free up the results in memory
-        mysqli_free_result( $results );
     }
+    
+    else if(mysqli_num_rows($results) === 0)
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+
+    # Free up the results in memory
+    mysqli_free_result($results);
 }
 
 # Shows the lost items in stuff table of limbo_db
@@ -435,8 +449,7 @@ function show_records_claimed($dbc, $user) {
     check_results($results);
 
     # Show results, if query succeeded
-    if( $results )
-    {	
+    if($results && mysqli_num_rows($results) > 0) {	
         echo '<table>';
         echo '<tr>';
 		echo '<th>ID</th>';
@@ -479,10 +492,13 @@ function show_records_claimed($dbc, $user) {
 		
 		if($debug)
 			echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . addslashes($query) . '");});</script>';
-
-        # Free up the results in memory
-        mysqli_free_result( $results );
     }
+    
+    else if(mysqli_num_rows($results) === 0)
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+
+    # Free up the results in memory
+    mysqli_free_result( $results );
 }
 
 # Shows a single record

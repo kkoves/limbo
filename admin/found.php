@@ -243,6 +243,7 @@ and open the template in the editor.
 					else if(isset($_GET['category']))
 						show_category_filter("Found",$_GET['category'], $user);
 				?>
+				<div id="error" style="color:red"></div>
                 <?php
                     #Call a helper function (in includes/helpers.php) to list the database contents
 					if(!isset($_GET['location']) && !isset($_GET['category']))

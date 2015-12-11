@@ -24,14 +24,12 @@ and open the template in the editor.
                 #if(valid_form()) { // if form is valid
 					claim_found_item("Claimed");	
 					$_POST = array();
-                    echo '<script>$(document).ready(function () {$("#success").html("Success! The item has been marked as claimed. An admin will be in contact with you to address your claim.");});</script>';                    
                 #}
 			}
             else if(isset($_POST['finder_email'])){
                 #if(valid_form()) { // if form is valid
 					claim_found_item("Found");	
 					$_POST = array();
-                    echo '<script>$(document).ready(function () {$("#success").html("Success! The item has been marked found.");});</script>';
                 #}
             }
         ?>

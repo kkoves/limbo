@@ -27,6 +27,7 @@ and open the template in the editor.
                 if(valid_form()) { // if form is valid 
 					insert_item('Found', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
 					$_POST = array();
+                    echo '<script>$(document).ready(function () {$("#success").html("Success! Your found item has been submitted.");});</script>';
 				}
 			}
         ?>
@@ -114,6 +115,7 @@ and open the template in the editor.
                         <div id="foundItemForm" class="row">
                             <form enctype="multipart/form-data" class="col s12" action="found.php" method="POST">
                                 <div id="error" style="color:red"></div>
+                                <div id="success" style="color:green"></div>
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input required placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
@@ -167,7 +169,7 @@ and open the template in the editor.
                                         <label>Location Found<span style="color:#B31B1B">*</span></label>
                                     </div>
 									<div class="input-field col s3">
-										<input required name="room" type="text" class="validate" value="<?php if(isset($_POST['room'])) echo $_POST['room']; ?>">
+										<input name="room" type="text" class="validate" value="<?php if(isset($_POST['room'])) echo $_POST['room']; ?>">
 										<label for="room">Room #</label>
 									</div>
                                 </div>
@@ -206,6 +208,7 @@ and open the template in the editor.
                                         <label for="textarea1">Description<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
+                                <!--
                                 <div class="row">
                                     <div class="file-field input-field col s6">
                                         <div class="btn red darken-4">
@@ -217,6 +220,7 @@ and open the template in the editor.
                                         </div>
                                     </div>
                                 </div>
+                                -->
                                 <div class="row">
                                     <div align="right" class="input-field col s6">
                                         <button class="btn waves-effect waves-light red darken-4" type="submit">Submit

@@ -1,5 +1,5 @@
 <?php
-$debug = true;
+$debug = false;
 
 # Get locations on Marist campus, make array
 /*function get_locations() {
@@ -786,7 +786,6 @@ function update_item_form($id){
 		$finder = $row['finder'];
 		$status = $row['status'];
 
-		#echo '<script>$(document).ready(function () {var date = new Date();var year = date.getFullYear();$("select").material_select();$(".datepicker").pickadate({selectMonths: true,selectYears: 2,max: year,format: "yyyy-mm-dd"});$("#description").val(' . $description . ');$("#description").trigger("autoresize");});</script>';
 		echo '<div class="row">';
         if($status === 'Lost')
             echo '<form enctype="multipart/form-data" class="col s12" action="../admin/lost.php" method="POST">';
@@ -985,6 +984,7 @@ function update_item_form($id){
         echo '</div>';
         echo '</div>';
         echo '</div>';
+        /*
         echo '<div class="file-field input-field col s12">';
         echo '<div class="btn red darken-4">';
         echo '<span>Photo</span>';
@@ -995,6 +995,7 @@ function update_item_form($id){
         echo '</div>';
         echo '</div>';
         echo '<br><br><br>';
+        */
         echo '<div align="right" class="row">';
         echo '<button class="btn waves-effect waves-light red darken-4" type="submit">Submit';
         echo '<i class="material-icons right">send</i>';
@@ -1058,44 +1059,51 @@ function claim_found_item($status) {
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_email']))))
 			$finder_email = $_POST['finder_email'];
 		else {
-			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
 	
 		if(trim(is_numeric(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_phone'])))))
 			$finder_phone = $_POST['finder_phone'];
 		else {
-			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_full_name']))))
 			$finder_full_name = $_POST['finder_full_name'];
 		else {
-			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($status))))
 			$status1 = $status;
 		else {
-			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
 		if(is_numeric($_POST['id']))
 			$id = $_POST['id'];
 		else {
-			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
+			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
         
         # update item as found only if it has not been reported found already
         if(!is_numeric(strpos($title, 'REPORTED FOUND:')))
             $query = 'UPDATE stuff SET title="REPORTED FOUND: ' . $title . '", update_date=NOW()' . ', found_date=NOW()'. ', finder_email="' . $finder_email . '", finder_phone="' . $finder_phone . '", finder="' . $finder_full_name . '", status="' . $status1 . '" WHERE id=' . $id;
-        else
-            return false;
     }
-    
-    $results = mysqli_query($dbc, $query);
-    check_results($results);
+    else
+        return false;
+    if(!empty($query)) {
+        $results = mysqli_query($dbc, $query);
+        check_results($results);
+        
+        if($status === 'Found')
+            echo '<script>$(document).ready(function () {$("#success").html("Success! The item has been marked found.");});</script>';
+        
+        else if($status === 'Claimed')
+             echo '<script>$(document).ready(function () {$("#success").html("Success! The item has been marked as claimed. An admin will be in contact with you to address your claim.");});</script>';                    
+    }
 	
     if($debug)
         echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . addslashes($query) . '");});</script>';
@@ -1141,7 +1149,7 @@ function insert_item($status, $date) {
     else
         $finder_phone = '';
     
-	$photo = $_POST['filepath'];
+	//$photo = $_POST['filepath'];
 	
 	if($status == 'Lost') $owner = $_POST['full_name'];
 	else $owner = '';
@@ -1151,7 +1159,7 @@ function insert_item($status, $date) {
     
     #TODO: add database insert functionality here
     
-    $query = "INSERT INTO stuff (location_id, title, description, category, create_date, update_date, lost_date, found_date, room, owner_email, owner_phone, finder_email, finder_phone, photo, owner, finder, status) VALUES($loc, \"$title\", \"$descr\", $category, \"$create_date\", \"$update_date\", \"$lost_date\", \"$found_date\", \"$room\", \"$owner_email\", \"$owner_phone\", \"$finder_email\", \"$finder_phone\", \"$photo\", \"$owner\", \"$finder\", \"$status\")";
+    $query = "INSERT INTO stuff (location_id, title, description, category, create_date, update_date, lost_date, found_date, room, owner_email, owner_phone, finder_email, finder_phone, owner, finder, status) VALUES($loc, \"$title\", \"$descr\", $category, \"$create_date\", \"$update_date\", \"$lost_date\", \"$found_date\", \"$room\", \"$owner_email\", \"$owner_phone\", \"$finder_email\", \"$finder_phone\", \"$owner\", \"$finder\", \"$status\")";
     
 	#Show query if debugging is enabled (at the top of this file)
     show_query($query);

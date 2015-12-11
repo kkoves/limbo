@@ -26,10 +26,11 @@ and open the template in the editor.
             if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if(valid_form()) { // if form is valid
 					insert_item('Lost', date('Y-m-d H:i:s')); // insert the values from the form into the database, with item status and current timestamp
+                    echo '<script>$(document).ready(function () {$("#success").html("Success! Your lost item has been submitted.");});</script>';
                     
-                    if(!empty($_POST['photo'])){
+                    /*if(!empty($_POST['photo'])){
                         upload_picture();
-					}
+					}*/
 					
 					$_POST = array();
                 }
@@ -120,6 +121,7 @@ and open the template in the editor.
                         <div id="lostItemForm" class="row">
                             <form enctype="multipart/form-data" class="col s12" action="lost.php" method="POST">
                                 <div id="error" style="color:red"></div>
+                                <div id="success" style="color:green"></div>
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input required placeholder="Submission Title" name="title" type="text" class="validate" value="<?php if(isset($_POST['title'])) echo $_POST['title']; ?>">
@@ -218,6 +220,7 @@ and open the template in the editor.
                                         <label for="textarea1">Description<span style="color:#B31B1B">*</span></label>
                                     </div>
                                 </div>
+                                <!--
                                 <div class="row">
                                     <div class="file-field input-field col s6">
                                         <div class="btn red darken-4">
@@ -229,6 +232,7 @@ and open the template in the editor.
                                         </div>
                                     </div>
                                 </div>
+                                -->
                                 <div class="row">
                                     <div align="right" class="input-field col s6">
                                         <button class="btn waves-effect waves-light red darken-4" type="submit">Submit

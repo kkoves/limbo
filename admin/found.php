@@ -183,6 +183,19 @@ and open the template in the editor.
 					</div>
 				</div>
 				<div class="row">
+					<nav>
+						<div class="nav-wrapper">
+							<form enctype="multipart/form-data" action="found.php" method="POST">
+								<div class="input-field">
+									<input name="search" id="search" type="search">
+									<label for="search"><i class="material-icons">search</i></label>
+									<i class="material-icons">close</i>
+								</div>
+							</form>
+						</div>
+				</div>
+					</nav>
+				<div class="row">
 					<div class="input-field col s1">
 						<label value="" disabled selected style="color:Black">Filter By:<label>
 					</div>
@@ -242,11 +255,14 @@ and open the template in the editor.
 					
 					else if(isset($_GET['category']))
 						show_category_filter("Found",$_GET['category'], $user);
+					
+					else if(isset($_POST['search']))
+						show_search_records("Found", $_POST['search'], $user);
 				?>
 				<div id="error" style="color:red"></div>
                 <?php
                     #Call a helper function (in includes/helpers.php) to list the database contents
-					if(!isset($_GET['location']) && !isset($_GET['category']))
+					if(!isset($_GET['location']) && !isset($_GET['category']) && !isset($_POST['search']))
 						show_records_found($dbc);
                 ?>
             </div>

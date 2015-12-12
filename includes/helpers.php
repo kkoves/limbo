@@ -107,11 +107,12 @@ function show_records($dbc) {
         echo '</table>';
     }
     
-    else if(mysqli_num_rows($results) === 0)
+    else if(mysqli_num_rows($results) === 0){
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
-    
-    # Free up the results in memory
-    mysqli_free_result($results);
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+	
 }
 
 # Shows the lost items in stuff table of limbo_db
@@ -166,11 +167,12 @@ function show_records_found($dbc) {
         echo '</table>';
     }
     
-    else if(mysqli_num_rows($results) === 0)
+    else if(mysqli_num_rows($results) === 0){
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
-    
-    # Free up the results in memory
-    mysqli_free_result($results);
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+	
 }
 
 # Shows a table filtered by location
@@ -193,7 +195,8 @@ function show_category_filter($status, $id, $user){
 	if($results && mysqli_num_rows($results) > 0) {
 		echo '<table>';
         echo '<tr>';
-		echo '<th>ID</th>';
+		if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f")
+			echo '<th>ID</th>';
         echo '<th>Title</th>';
         echo '<th>Location</th>';
         echo '<th>Date</th>';
@@ -215,7 +218,8 @@ function show_category_filter($status, $id, $user){
             $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
             
             echo '<tr>';
-			echo '<th>' . $row['id'] . '</th>';
+			if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f")
+				echo '<th>' . $row['id'] . '</th>';
             echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
@@ -232,11 +236,91 @@ function show_category_filter($status, $id, $user){
         echo '</table>';
 	}
     
-    else if(mysqli_num_rows($results) === 0)
+    else if(mysqli_num_rows($results) === 0){
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+	
+}
+
+# Show records with similar wording
+function show_search_records($status, $search, $user){
+	global $dbc;
+	
+	trim(mysqli_real_escape_string($dbc, htmlspecialchars($search)));
+	
+	#TODO Fix Query
+	if($status === "all")
+		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" OR description LIKE "%' . $search . '%"';
+	
+	else if($status === "Found")
+		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" AND status="Found" OR description LIKE "%' . $search . '%" AND status="Found"';
+	
+	else if($status === "Lost")
+		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" AND status="' . $status . '" OR description LIKE "%' . $search . '%" AND status="' . $status . '"';
+
+	
+	# Execute the query
+    $results = mysqli_query( $dbc , $query);
+	
+	#Output SQL errors, if any
+    check_results($results);
+	
+	if($results && mysqli_num_rows($results) > 0){
+		echo '<table>';
+        echo '<tr>';
+		if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f")
+			echo '<th>ID</th>';
+        echo '<th>Title</th>';
+        echo '<th>Location</th>';
+        echo '<th>Date</th>';
+        echo '<th>Category</th>';
+        echo '<th>Status</th>';
+		if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f"){
+			echo '<th style="text-align:center">Update Item</th>';
+			echo '<th style="text-align:center">Delete Item</th>';
+		}
+        echo '</tr>';
+
+        # For each row result, generate a table row
+        while ( $row = mysqli_fetch_array( $results , MYSQLI_ASSOC ) )
+        {
+            #$location = $locations[ $row['location_id'] ];
+            $location = get_location($row['location_id']);
+            $date = format_date($row['create_date'], "m/d/Y");
+            $category = get_category($row['category']);
+            $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+            
+            echo '<tr>';
+			if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f")
+				echo '<th>' . $row['id'] . '</th>';
+            echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
+            echo '<td>' . $location . '</td>';
+            echo '<td>' . $date . '</td>';
+            echo '<td>' . $category . '</td>';
+            echo '<td>' . $row['status'] . '</td>';
+            
+			if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f"){
+				echo '<td style="text-align:center">' . '<a class="material-icons" style="color:#9e9e9e" href="' . $url . '?updateID=' . $row['id'] . '">edit</a>' . '</td>';
+				echo '<td style="text-align:center">' . '<form class="col s12" action="' . $url . '" method="POST">' . '<button style="background-color:Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow:hidden;outline:none;" value="' . $row['id'] . '" name="deleteID" type="submit">' . '<i style="color:#9e9e9e" class="material-icons right">delete</i>' . '</button>' . '</form>' . '</td>';
+			}
+			echo '</tr>';
+        }
+
+        # End the table
+        echo '</table>';
+
+        # Free up the results in memory
+        mysqli_free_result( $results );
+	}
     
-    # Free up the results in memory
-    mysqli_free_result( $results );
+    else if(mysqli_num_rows($results) === 0){
+        echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+	
 }
 
 # Shows a table filtered by location
@@ -261,7 +345,8 @@ function show_location_filter($status, $id, $user){
 	if($results && mysqli_num_rows($results) > 0){
 		echo '<table>';
         echo '<tr>';
-		echo '<th>ID</th>';
+		if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f")
+			echo '<th>ID</th>';
         echo '<th>Title</th>';
         echo '<th>Location</th>';
         echo '<th>Date</th>';
@@ -283,7 +368,8 @@ function show_location_filter($status, $id, $user){
             $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
             
             echo '<tr>';
-			echo '<th>' . $row['id'] . '</th>';
+			if($user == "bad6e3c364465255cf62bca012b8fa88d68e931f")
+				echo '<th>' . $row['id'] . '</th>';
             echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
@@ -304,12 +390,12 @@ function show_location_filter($status, $id, $user){
         mysqli_free_result( $results );
 	}
     
-    else if(mysqli_num_rows($results) === 0)
+    else if(mysqli_num_rows($results) === 0){
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
-        
-    
-    # Free up the results in memory
-    mysqli_free_result( $results );
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+      
 }
 
 # Shows a table filtered by status
@@ -337,7 +423,6 @@ function show_status_filter($status){
 	if($results && mysqli_num_rows($results) > 0) {
 		echo '<table>';
         echo '<tr>';
-		echo '<th>ID</th>';
         echo '<th>Title</th>';
         echo '<th>Location</th>';
         echo '<th>Date</th>';
@@ -355,7 +440,6 @@ function show_status_filter($status){
             $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
             
             echo '<tr>';
-			echo '<th>' . $row['id'] . '</th>';
             echo '<td>' . '<a class="modal-trigger" href="' . $url . '?id=' . $row['id'] . '">' . $row['title'] . '</a>' . '</td>';
             echo '<td>' . $location . '</td>';
             echo '<td>' . $date . '</td>';
@@ -368,11 +452,12 @@ function show_status_filter($status){
         echo '</table>';
 	}
     
-    else if(mysqli_num_rows($results) === 0)
+    else if(mysqli_num_rows($results) === 0){
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
-
-    # Free up the results in memory
-    mysqli_free_result($results);
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+	
 }
 
 # Shows the lost items in stuff table of limbo_db
@@ -426,11 +511,12 @@ function show_records_lost($dbc) {
         echo '</table>';
     }
     
-    else if(mysqli_num_rows($results) === 0)
+    else if(mysqli_num_rows($results) === 0){
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
-
-    # Free up the results in memory
-    mysqli_free_result($results);
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+	
 }
 
 # Shows the lost items in stuff table of limbo_db
@@ -494,11 +580,12 @@ function show_records_claimed($dbc, $user) {
 			echo '<script>$(document).ready(function () {$("#error").html("' . 'Query: ' . addslashes($query) . '");});</script>';
     }
     
-    else if(mysqli_num_rows($results) === 0)
+    else if(mysqli_num_rows($results) === 0){
         echo '<script>$(document).ready(function() {$("#error").html("No results");});</script>';
-
-    # Free up the results in memory
-    mysqli_free_result( $results );
+		# Free up the results in memory
+		mysqli_free_result( $results );
+	}
+	
 }
 
 # Shows a single record

@@ -108,7 +108,9 @@ and open the template in the editor.
 			.container{
 				padding-left: 5%;
 			}
-			
+			.input-field input[type=search]{
+				background-color: #26a69a;
+			}
         </style>
     <body onload="startTime()">
         <header>

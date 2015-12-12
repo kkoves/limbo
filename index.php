@@ -102,6 +102,9 @@ and open the template in the editor.
             td{
                 vertical-align: top;
             }
+			.input-field input[type=search]{
+				background-color: #26a69a;
+			}
         </style>
     <body onload="startTime()">
         <header>

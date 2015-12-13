@@ -251,11 +251,13 @@ function show_search_records($status, $search, $user){
 	trim(mysqli_real_escape_string($dbc, htmlspecialchars($search)));
 	
 	#TODO Fix Query
-	if($status === "all")
-		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" OR description LIKE "%' . $search . '%"';
+	if($status === "all"){
+		$status = "Claimed";
+		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" AND status!="' . $status . '" OR description LIKE "%' . $search . '%" AND status!="' . $status . '"';
+	}
 	
 	else if($status === "Found")
-		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" AND status="Found" OR description LIKE "%' . $search . '%" AND status="Found"';
+		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" AND status="' . $status . '" OR description LIKE "%' . $search . '%" AND status="' . $status . '"';
 	
 	else if($status === "Lost")
 		$query = 'SELECT * FROM stuff WHERE title LIKE "%' . $search . '%" AND status="' . $status . '" OR description LIKE "%' . $search . '%" AND status="' . $status . '"';
@@ -785,9 +787,10 @@ function add_admin(){
 	# Variable options will be used to hash the password the new administrator will have. Passwords will also not be stored as plain text.
 	$random = mt_rand(0, 999999);
 	$random_string = sha1($random);
+	$salt = sha1($random_string);
 	$options = [
 		'cost' => 12,
-		'salt' => $random_string,
+		'salt' => $salt,
 	];
 	
 	$user = strtolower(trim($_POST['user']));
@@ -1104,26 +1107,27 @@ function claim_found_item($status) {
 	
     if($status === 'Claimed'){
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_email']))))
-			$owner_email = $_POST['owner_email'];
+			$owner_email =trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_email'])));
 		else {
 			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
 			return false;
 		}
 	
 		if(trim(is_numeric(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_phone'])))))
-			$owner_phone = $_POST['owner_phone'];
+			$owner_phone = trim(is_numeric(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_phone']))));
 		else {
 			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
 			return false;
 		}
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_full_name']))))
-			$owner_full_name = $_POST['owner_full_name'];
+			$owner_full_name = trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['owner_full_name'])));
 		else {
 			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unabled to be processed to to invalid input.");});</script>';
 			return false;
 		}
-		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($status))))
-			$status1 = $status;
+		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($status)))){
+			$status1 = trim(mysqli_real_escape_string($dbc, htmlspecialchars($status)));
+		}
 		else
 			return false;
 		if(is_numeric($_POST['id']))
@@ -1144,26 +1148,25 @@ function claim_found_item($status) {
         $title = $row['title'];
 		
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_email']))))
-			$finder_email = $_POST['finder_email'];
+			$finder_email = trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_email'])));
 		else {
 			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
-	
 		if(trim(is_numeric(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_phone'])))))
-			$finder_phone = $_POST['finder_phone'];
+			$finder_phone = trim(is_numeric(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_phone']))));
 		else {
 			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_full_name']))))
-			$finder_full_name = $_POST['finder_full_name'];
+			$finder_full_name = trim(mysqli_real_escape_string($dbc, htmlspecialchars($_POST['finder_full_name'])));
 		else {
 			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
 		}
 		if(trim(mysqli_real_escape_string($dbc, htmlspecialchars($status))))
-			$status1 = $status;
+			$status1 = trim(mysqli_real_escape_string($dbc, htmlspecialchars($status)));
 		else {
 			echo '<script>$(document).ready(function () {$("#error").html("Sorry, your request was unable to be processed due to invalid input.");});</script>';
 			return false;
